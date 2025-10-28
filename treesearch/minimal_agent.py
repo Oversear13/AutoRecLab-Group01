@@ -1,6 +1,6 @@
 import json
-from pathlib import Path
 import random
+from pathlib import Path
 from typing import Any, Optional
 
 import humanize
@@ -8,13 +8,13 @@ import humanize
 from config import Config
 from treesearch.backend.llm import query
 from treesearch.function_specs import (
+    plan_and_code_spec,
     review_func_spec,
     score_code_func_spec,
     set_code_requirements_spec,
-    plan_and_code_spec,
 )
 from treesearch.interpreter import ExecutionResult
-from treesearch.node import Node, NodeScore
+from treesearch.node import Node, NodeScore, Requirement
 from treesearch.utils.response import wrap_code
 from utils.log import _ROOT_LOGGER
 
@@ -267,7 +267,7 @@ class MinimalAgent:
         print("MinimalAgent: Getting plan and code")
         plan, code = self.plan_and_code_query(prompt)
         print("MinimalAgent: Draft complete")
-        return Node(plan=plan, code=code)
+        return self._new_node(plan, code)
 
     def _debug(self, parent_node: Node) -> Node:
         # Format node scores for the prompt
@@ -324,7 +324,7 @@ class MinimalAgent:
         #     prompt["Data Overview"] = self.data_preview
 
         plan, code = self.plan_and_code_query(prompt)
-        return Node(plan=plan, code=code, _parent=parent_node)
+        return self._new_node(plan, code, parent_node)
 
     def _improve(self, parent_node: Node) -> Node:
         # Format node scores for the prompt
@@ -362,10 +362,14 @@ class MinimalAgent:
         prompt["Instructions"] |= self._prompt_impl_guideline
 
         plan, code = self.plan_and_code_query(prompt)
+        return self._new_node(plan, code, parent_node)
+
+    def _new_node(self, plan: str, code: str, parent: Optional[Node] = None):
         return Node(
             plan=plan,
             code=code,
-            _parent=parent_node,
+            _parent=parent,
+            requirements=[Requirement(r) for r in self.code_requirements],
         )
 
     def _generate_seed_node(self, parent_node: Node):
