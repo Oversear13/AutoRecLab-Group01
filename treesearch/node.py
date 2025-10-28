@@ -12,6 +12,12 @@ from treesearch.utils.response import trim_long_string
 
 
 @dataclass
+class Requirement:
+    description: str
+    is_fulfilled = False
+
+
+@dataclass
 class NodeScore:
     score: float = 0.0
     feedback: str = ""
@@ -68,6 +74,7 @@ class Node(NodeMixin):
     # -> always True if exc_type is not None or no valid metric
     is_buggy: bool = field(default=None)  # type: ignore
     is_buggy_plots: Optional[bool] = field(default=None)
+    requirements: list[Requirement] = field(default_factory=list)
 
     # ---- plotting ----
     plot_data: dict = field(default_factory=dict)
