@@ -15,6 +15,7 @@ from treesearch.utils.response import trim_long_string
 class Requirement:
     description: str
     is_fulfilled = False
+    feedback: Optional[str] = None
 
 
 @dataclass

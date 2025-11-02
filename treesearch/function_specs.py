@@ -79,6 +79,25 @@ score_code_func_spec = FunctionSpec(
     description="Score the code implementation and provide feedback on its quality.",
 )
 
+score_code_func_spec = FunctionSpec(
+    name="score_code",
+    json_schema={
+        "type": "object",
+        "properties": {
+            "fulfilled": {
+                "type": "boolean",
+                "description": "True if the specified requirement is fulfilled, false otherwise.",
+            },
+            "feedback": {
+                "type": "string",
+                "description": "Short feedback explaining why the requirement is or isn't fulfilled.",
+            },
+        },
+        "required": ["fulfilled", "feedback"],
+    },
+    description="Judge whether a single requirement is fulfilled by the code implementation and explain briefly.",
+)
+
 set_code_requirements_spec = FunctionSpec(
     name="set_code_requirements",
     json_schema={
@@ -89,10 +108,10 @@ set_code_requirements_spec = FunctionSpec(
                 "description": "A list of concise, clear and specific code requirements.",
                 "items": {
                     "type": "string",
-                    "description": "One specific requirement that must be met."
-                }
+                    "description": "One specific requirement that must be met.",
+                },
             }
-        }
+        },
     },
     description=(
         "Set clear and specific code requirements for the implementation based on the research task."
@@ -116,21 +135,21 @@ plot_selection_spec = FunctionSpec(
     description="Select the 10 most relevant plots for analysis",
 )
 
-plan_and_code_spec  = FunctionSpec(
+plan_and_code_spec = FunctionSpec(
     name="return_plan_and_code",
     json_schema={
         "type": "object",
         "properties": {
             "nl_text": {
                 "type": "string",
-                "description": "Explanatory natural language text describing the plan or reasoning behind the code."
+                "description": "Explanatory natural language text describing the plan or reasoning behind the code.",
             },
             "code": {
                 "type": "string",
-                "description": "The complete Python source code implementing the plan."
-            }
+                "description": "The complete Python source code implementing the plan.",
+            },
         },
         "required": ["nl_text", "code"],
     },
-    description= "Return a natural language plan and the Python code that implements it."
+    description="Return a natural language plan and the Python code that implements it.",
 )

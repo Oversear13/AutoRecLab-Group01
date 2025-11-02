@@ -309,10 +309,6 @@ class MinimalAgent:
             requirements=[Requirement(r) for r in self.code_requirements],
         )
 
-    
-
-    
-
     def plan_and_code_query(self, prompt, retries=3) -> tuple[str, str]:
         # TODO: Refactor this to use the function spec
         # TODO: Integrate the code requirements in the plan. Must be removed in other functions like _debug and _improve since they call this function.
@@ -360,7 +356,7 @@ class MinimalAgent:
         self.code_requirements = requirements_result.get(
             "requirements", "No specific requirements provided."
         )
-        
+
         # Requirements reflection round
         reflection_prompt = f"""You are an expert recommender systems researcher conducting a quality review.
             Your colleague generated code requirements that, when fulfilled, should result in a successful implementation of the research task.
@@ -485,44 +481,67 @@ class MinimalAgent:
         logger.info("Node execution successful, proceeding with detailed scoring")
 
         # If the node is not buggy, use the scoring system
-        scoring_prompt = {
-            f"Instructions": (
-                f"""You are an expert recommender system researcher conducting a code review for an important experiment. You are provided the research task, the code implementation and the execution output. You must score the code using the following requirements: \n{self.code_requirements}\n. Each requirement can either be fullfilled or not fulfilled. The score is the percentage of requirements that are fulfilled, e.g. if 7 out of 10 requirements are fulfilled, the score is 70. Additionally, you provide clear and constructive feedback how to improve the code implementation based on the requirements."""
-            ),
-            f"Research Task": (self.task_desc),
-            f"Implementation": (wrap_code(node.code)),
-            f"Execution output": (wrap_code(node.term_out, lang="")),
-        }
+        for req in node.requirements:
+            scoring_prompt = {
+                "Instructions": (
+                    "You are an expert recommender system researcher reviewing code for an experiment."
+                    "You are provided the research task, the code implementation and the execution output."
+                    "Judge if the following requirement is fulfilled by the implementation."
+                    "If the requirement is not fulfilled provide a short feedback of maximum a sentence on why it is not fulfilled and what needs to be changed to fulfill it."
+                ),
+                "Requirement": req.description,
+                "Research Task": self.task_desc,
+                "Implementation": wrap_code(node.code),
+                "Execution output": wrap_code(node.term_out, lang=""),
+            }
 
-        try:
-            scoring_result = query(
-                system_message=scoring_prompt,
-                user_message=None,
-                model=self.cfg.agent.code.model,
-                temperature=self.cfg.agent.code.model_temp,
-                func_spec=score_code_func_spec,
+            try:
+                scoring_result = query(
+                    system_message=scoring_prompt,
+                    user_message=None,
+                    model=self.cfg.agent.code.model,
+                    temperature=self.cfg.agent.code.model_temp,
+                    func_spec=score_code_func_spec,
+                )
+
+                req.is_fulfilled = scoring_result.get("fulfilled", False)
+                req.feedback = scoring_result.get(
+                    "feedback", "No specific feedback provided."
+                )
+
+            except Exception as e:
+                logger.error(f"Error generate feedback for requirement: {req}")
+                logger.error(f"Error in scoring: {e}")
+                # Fallback requirement feedback
+                req.is_fulfilled = False
+                req.feedback = "No specific feedback provided."
+
+        # Build overall feedback:
+        num_fulfilled = 0
+        overall_feedback = "Below is a list of requirements that are not yet met and some feedback for each:"
+        for req in node.requirements:
+            if req.is_fulfilled:
+                num_fulfilled += 1
+                continue
+
+            overall_feedback += (
+                f"\n- Requirement: {req.description}\n- Feedback: {req.feedback}\n"
             )
 
-            # Parse the structured response
-            node.score = NodeScore(
-                score=scoring_result.get("score", 0.0),
-                feedback=scoring_result.get("feedback", ""),
-                is_satisfactory=scoring_result.get("is_satisfactory", False),
-            )
+        score = num_fulfilled / len(node.requirements)
 
-        except Exception as e:
-            logger.error(f"Error in scoring: {e}")
-            # Fallback scoring for successful but unscored code
-            node.score = NodeScore(
-                score=0.0,
-                feedback=f"Scoring failed but code executed successfully: {str(e)}",
-                is_satisfactory=False,
-            )
+        node.score = NodeScore(
+            score=score,
+            feedback=overall_feedback,
+            is_satisfactory=score == 100,
+        )
+        logger.info(
+            f"Scored node: {score * 100}% ({num_fulfilled}/{len(node.requirements)})"
+        )
 
-        print(node.score)
+        logger.debug(node.score)
 
         return node
-
 
     def _summarize(self, user_request: str, node: Node) -> str:
         """Summarizes the results of a node and returns a human readable report.
@@ -571,5 +590,3 @@ class MinimalAgent:
                 self.cfg.agent.code.model_temp,
             )
         )
-
-    
