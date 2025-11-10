@@ -99,11 +99,11 @@ class Interpreter:
             env_vars (dict[str, str], optional): Environment variables to set in the child process. Defaults to {}.
         """
         # this really needs to be a path, otherwise causes issues that don't raise exc
-        logger.info("Initializing agent...")
+        logger.info("Initializing interpreter...")
         self.working_dir = Path(working_dir).resolve()
-        assert (
-            self.working_dir.exists()
-        ), f"Working directory {self.working_dir} does not exist"
+        assert self.working_dir.exists(), (
+            f"Working directory {self.working_dir} does not exist"
+        )
         self.timeout = timeout
         self.format_tb_ipython = format_tb_ipython
         self.agent_file_name = agent_file_name
@@ -197,6 +197,7 @@ class Interpreter:
                 break
 
     def cleanup_session(self):
+        logger.debug("Cleaning up interpreter session")
         if self.process is None:
             return
         # give the child process a chance to terminate gracefully

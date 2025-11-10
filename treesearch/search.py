@@ -86,7 +86,7 @@ class TreeSearch:
             if child_node.score.is_satisfactory:
                 logger.info("Found satisfactory node:")
                 self.save()
-                self.print_experiment_summary(child_node)
+                self.finalize_search(child_node)
                 return
 
         self.save()
@@ -94,7 +94,7 @@ class TreeSearch:
         logger.warning("Found no satisfactory node; Using best node instead...")
 
         best_node = self.best_good_node
-        self.print_experiment_summary(best_node)
+        self.finalize_search(best_node)
 
     def exec_node(self, node: Node) -> Node:
         exec_result = self._interpreter.run(node.code)
@@ -103,6 +103,8 @@ class TreeSearch:
         return node
 
     def print_experiment_summary(self, result_node: Node):
+    def finalize_search(self, result_node: Node):
+        self._interpreter.cleanup_session()
         logger.info("Final response:")
         print(self._minimal_agent._summarize(self._user_request, result_node))
 
