@@ -1,16 +1,19 @@
 import pickle
 import random
+import shutil
 from pathlib import Path
 
 from anytree import PreOrderIter
 
-from config import Config
+from config import CONFIG_PATH, Config
 
 # from treesearch.minimal_agent import MinimalAgent
 from treesearch.interpreter import Interpreter
 from treesearch.minimal_agent import MinimalAgent
 from treesearch.node import Node
 from utils.log import _ROOT_LOGGER
+from utils.path import mkdir
+from viz import render_trees
 
 logger = _ROOT_LOGGER.getChild("treesearch")
 
@@ -20,9 +23,12 @@ class TreeSearch:
         self._user_request = user_request
         self._config = config
         self._draft_nodes: list[Node] = []
-        workspace_pth = Path(config.exec.workspace).resolve()
-        workspace_pth.mkdir(exist_ok=True, parents=True)
+        self._out_dir = mkdir(Path(config.out_dir))
+        workspace_pth = mkdir(self._out_dir / "workspace").resolve()
         self._workspace = str(workspace_pth)
+        self._checkpoint_dir = mkdir(self._out_dir / "checkpoint")
+
+        shutil.copy(CONFIG_PATH, self._out_dir)
 
         self._minimal_agent = MinimalAgent(self._task_desc, self._config)
         self._interpreter = Interpreter(self._workspace, self._config.exec.timeout)
@@ -99,10 +105,15 @@ class TreeSearch:
     def exec_node(self, node: Node) -> Node:
         exec_result = self._interpreter.run(node.code)
         logger.debug(exec_result)
+
+        node_dir = mkdir(self._checkpoint_dir / node.id)
+        (node_dir / "code.py").write_text(node.code)
+        (node_dir / "out.log").write_text("".join(exec_result.term_out))
+        (node_dir / "exec_result.pkl").write_bytes(pickle.dumps(exec_result))
+
         self._minimal_agent.score_code(node, exec_result)
         return node
 
-    def print_experiment_summary(self, result_node: Node):
     def finalize_search(self, result_node: Node):
         self._interpreter.cleanup_session()
         logger.info("Final response:")
@@ -119,6 +130,10 @@ The idea is:\n
         return task_desc
 
     def save(self):
-        with open("./out/save.pkl", "wb") as f:
-            logger.warning(f"SAVING {len(self._draft_nodes)}.....")
+        logger.info("Generating tree visualization...")
+        tree_render_dir = mkdir(self._out_dir / "tree_render")
+        render_trees(self._draft_nodes, tree_render_dir)
+
+        with open(self._out_dir / "save.pkl", "wb") as f:
+            logger.info(f"SAVING {len(self._draft_nodes)}.....")
             pickle.dump(self._draft_nodes, f)

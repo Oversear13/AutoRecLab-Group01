@@ -2,6 +2,9 @@ FROM ghcr.io/astral-sh/uv:python3.11-bookworm-slim
 
 WORKDIR /app
 
+RUN apt update -y
+RUN apt install -y graphviz 
+
 COPY pyproject.toml uv.lock .python-version /app/
 
 RUN uv sync
