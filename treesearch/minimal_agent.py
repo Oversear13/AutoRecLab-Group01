@@ -17,6 +17,7 @@ from treesearch.interpreter import ExecutionResult
 from treesearch.node import Node, NodeScore, Requirement
 from treesearch.utils.response import wrap_code
 from utils.log import _ROOT_LOGGER
+from utils.path import mkdir
 
 logger = _ROOT_LOGGER.getChild("nodeAgent")
 
@@ -38,10 +39,9 @@ class MinimalAgent:
         self.cfg = cfg
         self.evaluation_metrics = evaluation_metrics
         self.stage_name = stage_name
-        # HACK:
-        # self.data_preview = None
         self._set_code_requirements()
-        Path("./out/code_requirements.json").write_text(
+        self._out_dir = mkdir(Path(cfg.out_dir))
+        (self._out_dir / "code_requirements.json").write_text(
             json.dumps(self.code_requirements)
         )
         logger.info("Agent initialized!")
