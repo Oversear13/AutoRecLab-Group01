@@ -71,7 +71,7 @@ class MinimalAgent:
             "1. Libraries: Use standard libraries (pandas, numpy, scikit-learn, lenskit) whenever possible. Avoid implementing algorithms from scratch.",
             "2. Code Structure:",
             "   - Single-file, self-contained Python script.",
-            "   - No `if __name__ == '__main__':` blocks. Code should execute immediately.",
+            "   - ALWAYS wrap the program’s starting point in `if __name__ == '__main__':` so it only runs when the script is executed directly.",
             "   - All code at global scope or in functions called from global scope.",
             "3. Environment & Output:",
             "   - Start with:",
@@ -205,7 +205,9 @@ class MinimalAgent:
                 "We will explore more advanced variations in later stages."
             ),
             "Research task": self.task_desc,
-            "Code Requirements": self.code_requirements if hasattr(self, "code_requirements") else "",
+            "Code Requirements": self.code_requirements
+            if hasattr(self, "code_requirements")
+            else "",
             "Memory": self.memory_summary if self.memory_summary else "",
             "Instructions": {},
         }
@@ -550,9 +552,14 @@ class MinimalAgent:
         # Build overall feedback:
         num_fulfilled = 0
         overall_feedback = "Below is a list of requirements that are not yet met and some feedback for each:"
-        
+
         if node.is_buggy:
-            overall_feedback = "This code contains one or multiple bugs:\n" + bug_feedback + "\n\n" + overall_feedback
+            overall_feedback = (
+                "This code contains one or multiple bugs:\n"
+                + bug_feedback
+                + "\n\n"
+                + overall_feedback
+            )
 
         for req in node.requirements:
             if req.is_fulfilled:
@@ -569,7 +576,7 @@ class MinimalAgent:
             is_satisfactory = False
         else:
             is_satisfactory = score == 1.0
-            
+
         node.score = NodeScore(
             score=score,
             feedback=overall_feedback,

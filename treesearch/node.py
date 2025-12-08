@@ -47,9 +47,6 @@ class Node(NodeMixin):
     # ---- execution info ----
     _term_out: list[str] = field(default=None)  # type: ignore
     exec_time: float = field(default=None)  # type: ignore
-    exc_type: str | None = field(default=None)
-    exc_info: dict | None = field(default=None)
-    exc_stack: list[tuple] | None = field(default=None)
 
     # ---- parsing info ----
     parse_metrics_plan: str = field(default="")
@@ -63,9 +60,6 @@ class Node(NodeMixin):
     # ---- plot execution info ----
     plot_term_out: list[str] = field(default=None)  # type: ignore
     plot_exec_time: float = field(default=None)  # type: ignore
-    plot_exc_type: str | None = field(default=None)
-    plot_exc_info: dict | None = field(default=None)
-    plot_exc_stack: list[tuple] | None = field(default=None)
 
     # ---- evaluation ----
     # post-execution result analysis (findings/feedback)
@@ -167,17 +161,11 @@ class Node(NodeMixin):
         """Absorb the result of executing the code from this node."""
         self._term_out = exec_result.term_out
         self.exec_time = exec_result.exec_time
-        self.exc_type = exec_result.exc_type
-        self.exc_info = exec_result.exc_info
-        self.exc_stack = exec_result.exc_stack
 
     def absorb_plot_exec_result(self, plot_exec_result: ExecutionResult):
         """Absorb the result of executing the plotting code from this node."""
         self.plot_term_out = plot_exec_result.term_out
         self.plot_exec_time = plot_exec_result.exec_time
-        self.plot_exc_type = plot_exec_result.exc_type
-        self.plot_exc_info = plot_exec_result.exc_info
-        self.plot_exc_stack = plot_exec_result.exc_stack
 
     @property
     def term_out(self) -> str:
