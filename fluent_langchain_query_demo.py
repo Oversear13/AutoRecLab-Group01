@@ -7,6 +7,7 @@ from pprint import pprint
 from dotenv import load_dotenv
 from langchain.tools import tool
 
+from config import Config
 from treesearch.llm.query import MCPConnection, Query
 
 
@@ -17,6 +18,7 @@ def finish():
 
 async def main():
     load_dotenv()
+    cfg = Config()
 
     greet_mcp = MCPConnection(
         "greet_mcp",
@@ -32,7 +34,7 @@ async def main():
         message: str  # Final message for the user
 
     resp = (
-        await Query()
+        await Query(cfg.agent.code.model)
         .with_mcp(greet_mcp)
         .with_tool(finish)
         .with_system(

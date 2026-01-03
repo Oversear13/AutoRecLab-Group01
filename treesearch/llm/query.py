@@ -27,16 +27,19 @@ class MCPConnection:
 
 
 """ # TODO:
-- [ ] limit number of tool calls somehow?
+- [x] limit number of tool calls (solved: implemented via max_iterations parameter)
 - [ ] the error handling in lines 75 - 80 is prob not ideal 
 """
 
 
 class Query:
-    def __init__(self) -> None:
+    def __init__(self, model: str, temperature: float | None = None, max_iterations: int = 25) -> None:
         self._mcp_connections: list[MCPConnection] = []
         self._tools: list[BaseTool] = []
         self._system_prompt: Optional[str] = None
+        self._model = model
+        self._temperature = temperature
+        self._max_iterations = max_iterations
 
     def with_tool(self, *tool: BaseTool) -> Self:
         self._tools.extend(tool)
@@ -62,14 +65,19 @@ class Query:
         input = prompt_to_md(input)
         tools = await self._get_all_tools()
 
+        logger.info(f"Using model: {self._model}")
+        
         agent = create_agent(
-            model="gpt-5-mini",
+            model=self._model,
             tools=tools,
             response_format=response_format,
             system_prompt=self._system_prompt,
         )
 
-        resp = await agent.ainvoke({"messages": [HumanMessage(input)]})
+        resp = await agent.ainvoke(
+            {"messages": [HumanMessage(input)]},
+            config={"recursion_limit": self._max_iterations},
+        )
 
         if response_format:
             structured_resp: RT = resp["structured_response"]
@@ -77,15 +85,14 @@ class Query:
 
         messages = resp.get("messages")
         if messages is None or len(messages) == 0:
-            logger.critical("LLM did not return any message!")
-            sys.exit(1)
+            raise RuntimeError("LLM did not return any message!")
 
-        last_msg = messages[-1]
-        if not isinstance(last_msg, AIMessage):
-            logger.critical("Last message was not an AIMessage!")
-            sys.exit(1)
+        # Find the last AIMessage in the conversation
+        ai_messages = [msg for msg in reversed(messages) if isinstance(msg, AIMessage)]
+        if not ai_messages:
+            raise RuntimeError("No AIMessage found in response!")
 
-        return str(last_msg.content)
+        return str(ai_messages[0].content)
 
     async def _get_all_tools(self) -> list[BaseTool]:
         tools = self._tools
