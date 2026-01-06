@@ -21,6 +21,7 @@ dependencies = [
     "langchain-text-splitters>=1.1.0",
     "lenskit==0.14.4",
     "matplotlib>=3.10.7",
+    "mcp[cli]>=1.25.0",
     "numpy>=1.26.4",
     "openai>=1.108.1",
     "pydantic-settings>=2.10.1",
