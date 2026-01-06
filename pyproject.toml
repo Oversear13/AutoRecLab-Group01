@@ -11,10 +11,14 @@ dependencies = [
     "black>=25.9.0",
     "dataclasses-json>=0.6.7",
     "dataloader",
+    "faiss-cpu>=1.13.2",
     "funcy>=2.0",
     "graphviz>=0.21",
     "humanize>=4.13.0",
     "jsonschema>=4.25.1",
+    "langchain-community>=0.4.1",
+    "langchain-openai>=1.1.6",
+    "langchain-text-splitters>=1.1.0",
     "lenskit==0.14.4",
     "matplotlib>=3.10.7",
     "numpy>=1.26.4",
@@ -27,10 +31,17 @@ dependencies = [
     "tomli-w>=1.2.0",
 ]
 
+[project.scripts]
+embeddings = "cli.embeddings.main:main"
+
 [tool.uv.workspace]
-members = [
-    "packages/dataloader",
-]
+members = ["packages/dataloader"]
+
+[tool.uv]
+package = true
 
 [tool.uv.sources]
 dataloader = { workspace = true, editable = true }
+
+[tool.setuptools]
+packages = ["cli", "treesearch", "utils"]
