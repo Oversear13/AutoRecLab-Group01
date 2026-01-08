@@ -128,8 +128,10 @@ def prompt_to_md(prompt: Prompt) -> str:
     return _prompt_to_md(prompt)[0]
 
 
-def _prompt_to_md(prompt: Prompt, level=1) -> tuple[str, bool]:
-    if isinstance(prompt, dict):
+def _prompt_to_md(prompt: Prompt | None, level=1) -> tuple[str, bool]:
+    if prompt is None:
+        return "None", True
+    elif isinstance(prompt, dict):
         parts = []
         any_text = False
 
