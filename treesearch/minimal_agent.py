@@ -1,7 +1,6 @@
 import json
 import random
 from pathlib import Path
-from treesearch.utils.available_datasets import get_datasets_table
 from typing import Any, Optional
 
 import humanize
@@ -12,11 +11,12 @@ from treesearch.function_specs import (
     plan_and_code_spec,
     review_func_spec,
     score_code_func_spec,
-    set_code_requirements_spec,
     select_datasets_spec,
+    set_code_requirements_spec,
 )
 from treesearch.interpreter import ExecutionResult
 from treesearch.node import Node, NodeScore, Requirement
+from treesearch.utils.available_datasets import get_datasets_table
 from treesearch.utils.response import wrap_code
 from utils.log import _ROOT_LOGGER
 from utils.path import mkdir
@@ -184,29 +184,6 @@ class MinimalAgent:
     #
     #     return {"Implementation guideline": impl_guideline}
 
-    @property
-    def _prompt_resp_fmt(self):
-        return {
-            "Response format": (
-                "Your response should be a brief outline/sketch of your proposed solution in natural language (7-10 sentences), "
-                "followed by a single markdown code block (using the format ```python ... ```) which implements this solution and prints out the evaluation metric(s) if applicable. "
-                "There should be no additional headings or text in your response. Just natural language text followed by a newline and then the markdown code block. "
-                "Make sure to write concise code."
-            )
-        }
-
-    @property
-    def _prompt_debug_resp_fmt(self):
-        return {
-            "Response format": (
-                "Your response should be a brief outline/sketch of your proposed solution in natural language (3-5 sentences), "
-                "followed by a single markdown code block (using the format ```python ... ```) which implements the full code including the bugfix/solution. "
-                "There should be no additional headings or text in your response. Just natural language text followed by a newline and then the markdown code block. "
-                "Your generated code should be complete and executable. Do not omit any part of the code, even if it was part of a previous implementation."
-                "Make sure to write concise code."
-            )
-        }
-
     def _draft(self) -> Node:
         prompt: Any = {
             "Introduction": (
@@ -223,7 +200,6 @@ class MinimalAgent:
             "Memory": self.memory_summary if self.memory_summary else "",
             "Instructions": {},
         }
-        prompt["Instructions"] |= self._prompt_resp_fmt
         prompt["Instructions"] |= {
             "Experiment design sketch guideline": [
                 "This first experiment design should be relatively simple, without extensive hyper-parameter optimization.",
@@ -291,7 +267,6 @@ class MinimalAgent:
             "Feedback about execution time": parent_node.exec_time_feedback,
             "Instructions": {},
         }
-        prompt["Instructions"] |= self._prompt_debug_resp_fmt
         prompt["Instructions"] |= {
             "Bugfix improvement sketch guideline": [
                 "You should write a brief natural language description (3-5 sentences) of how the issue in the previous implementation can be fixed.",
@@ -334,7 +309,6 @@ class MinimalAgent:
             "Code": wrap_code(parent_node.code),
         }
 
-        prompt["Instructions"] |= self._prompt_resp_fmt
         prompt["Instructions"] |= {
             "Improvement guidelines": [
                 "Based on the scoring feedback above, focus on the requirements that need improvement.",
@@ -356,28 +330,17 @@ class MinimalAgent:
 
     def plan_and_code_query(self, prompt, retries=3) -> tuple[str, str]:
         """Generate a natural language plan + code in the same LLM call and split them apart."""
-        completion_text = None
-        for _ in range(retries):
-            plan_and_code_result = query(
-                system_message=prompt,
-                user_message=None,
-                func_spec=plan_and_code_spec,
-                model=self.cfg.agent.code.model,
-                temperature=self.cfg.agent.code.model_temp,
-            )
+        plan_and_code_result = query(
+            system_message=prompt,
+            user_message=None,
+            func_spec=plan_and_code_spec,
+            model=self.cfg.agent.code.model,
+            temperature=self.cfg.agent.code.model_temp,
+        )
 
-            nl_text = plan_and_code_result.get("nl_text", "")
-            code = plan_and_code_result.get("code", "")
-            if code and nl_text:
-                # merge all code blocks into a single string
-                return nl_text, code
-
-            print("Plan + code extraction failed, retrying...")
-            prompt["Parsing Feedback"] = (
-                "The code extraction failed. Make sure to use the format ```python ... ``` for the code blocks."
-            )
-        print("Final plan + code extraction attempt failed, giving up...")
-        return "", completion_text  # type: ignore
+        nl_text = plan_and_code_result.get("nl_text", "")
+        code = plan_and_code_result.get("code", "")
+        return nl_text, code
 
     def _select_datasets(self) -> list[str]:
         """Select appropriate datasets for the research task using LLM."""
