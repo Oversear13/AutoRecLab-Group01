@@ -14,7 +14,7 @@ from treesearch.function_specs import (
     SelectDatasets,
 )
 from treesearch.interpreter import ExecutionResult
-from treesearch.llm.query import Prompt, Query
+from treesearch.llm.query import MCPConnection, Prompt, Query
 from treesearch.node import Node, NodeScore, Requirement
 from treesearch.utils.available_datasets import get_datasets_table
 from treesearch.utils.response import wrap_code
@@ -50,6 +50,16 @@ class MinimalAgent:
         self.stage_name = stage_name
         self._out_dir = mkdir(Path(cfg.out_dir))
         logger.info("Agent initialized!")
+
+        # Setup MCP connections for documentation search
+        self._mcp_docs = MCPConnection(
+            name="docs_search",
+            connection={
+                "transport": "stdio",
+                "command": "python",
+                "args": ["-m", "treesearch.mcp.docs_search_server"]
+            }
+        )
 
     async def _async_init(self):
         self.selected_datasets = await self._select_datasets()
@@ -332,7 +342,7 @@ class MinimalAgent:
 
     async def plan_and_code_query(self, prompt, retries=3) -> tuple[str, str]:
         """Generate a natural language plan + code in the same LLM call and split them apart."""
-        plan_and_code_result = await Query().run(prompt, PlanAndCode)
+        plan_and_code_result = await Query().with_mcp(self._mcp_docs).run(prompt, PlanAndCode)
 
         nl_text = plan_and_code_result.nl_text
         code = plan_and_code_result.code
@@ -350,7 +360,7 @@ class MinimalAgent:
                 f"Here are all available datasets with their identifiers and brief statistics:\n{get_datasets_table()}"
             )
         }
-        result = await Query().run(prompt, SelectDatasets)
+        result = await Query().with_mcp(self._mcp_docs).run(prompt, SelectDatasets)
         return result.selected_datasets
 
     async def _set_code_requirements(self):
@@ -405,7 +415,7 @@ class MinimalAgent:
            - Focus: Requirements focus on successful experiment execution and meaningful results.
         2. Refinement: Fix any issues found. Keep requirements that already meet the criteria unchanged.
         """
-        reflection_result = await Query().run(reflection_prompt, CodeRequirements)
+        reflection_result = await Query().with_mcp(self._mcp_docs).run(reflection_prompt, CodeRequirements)
         if len(reflection_result.requirements) == 0:
             self.code_requirements = "No specific requirements provided."
         else:
@@ -443,7 +453,7 @@ class MinimalAgent:
         bug_feedback = ""
 
         try:
-            review_result = await Query().run(review_prompt, ReviewFunction)
+            review_result = await Query().with_mcp(self._mcp_docs).run(review_prompt, ReviewFunction)
 
             # Update node with review results
             node.is_buggy = review_result.is_bug
@@ -502,7 +512,7 @@ class MinimalAgent:
             }
 
             try:
-                scoring_result = await Query().run(scoring_prompt, ScoreCode)
+                scoring_result = await Query().with_mcp(self._mcp_docs).run(scoring_prompt, ScoreCode)
 
                 req.is_fulfilled = scoring_result.fulfilled
                 req.feedback = scoring_result.feedback
@@ -592,4 +602,4 @@ class MinimalAgent:
             ],
         }
 
-        return await Query().run(summary_prompt)
+        return await Query().with_mcp(self._mcp_docs).run(summary_prompt)
