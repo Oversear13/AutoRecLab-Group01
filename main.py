@@ -1,18 +1,20 @@
+import asyncio
 import os
 from argparse import ArgumentParser
 
-from config import load_config
+from config import get_config
 from treesearch.search import TreeSearch
 from utils.log import _ROOT_LOGGER, attach_file_handler, set_log_level
 from utils.path import mkdir
+import asyncio
 
 logger = _ROOT_LOGGER.getChild("main")
 
 
-def main():
+async def main():
     set_log_level(os.getenv("ISGSA_LOG", "INFO"))
 
-    config = load_config()
+    config = get_config()
     out_dir = mkdir(config.out_dir)
     args = get_args()
     if args.init:
@@ -34,7 +36,8 @@ def main():
     logger.info("Starting AutoRecLab...")
 
     ts = TreeSearch(user_request, config=config)
-    ts.run()
+    await ts._async_init()
+    await ts.run()
 
 
 def get_args():
@@ -45,4 +48,4 @@ def get_args():
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
