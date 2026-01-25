@@ -17,7 +17,7 @@ from treesearch.interpreter import ExecutionResult
 from treesearch.llm.query import MCPConnection, Prompt, Query
 from treesearch.node import Node, NodeScore, Requirement
 from treesearch.utils.available_datasets import get_datasets_table
-from treesearch.utils.response import wrap_code
+from treesearch.utils.response import strip_markdown_fences
 from utils.log import _ROOT_LOGGER
 from utils.path import mkdir
 
@@ -58,8 +58,8 @@ class MinimalAgent:
             connection={
                 "transport": "stdio",
                 "command": "python",
-                "args": ["-m", "treesearch.mcp.docs_search_server"]
-            }
+                "args": ["-m", "treesearch.mcp.docs_search_server"],
+            },
         )
 
     async def _async_init(self):
@@ -274,8 +274,8 @@ class MinimalAgent:
                 " followed by a single markdown code block which implements the bugfix/solution."
             ),
             "Research task": self.task_desc,
-            "Previous (buggy) implementation": wrap_code(parent_node.code),
-            "Execution output": wrap_code(parent_node.term_out, lang=""),
+            "Previous (buggy) implementation": parent_node.code,
+            "Execution output": parent_node.term_out,
             "Bug Analysis & Scoring": enhanced_bug_info + score_info,
             "Feedback about execution time": parent_node.exec_time_feedback,
             "Instructions": {},
@@ -319,7 +319,7 @@ class MinimalAgent:
             "Instructions": {},
         }
         prompt["Previous solution"] = {
-            "Code": wrap_code(parent_node.code),
+            "Code": parent_node.code,
         }
 
         prompt["Instructions"] |= {
@@ -343,13 +343,18 @@ class MinimalAgent:
 
     async def plan_and_code_query(self, prompt, retries=3) -> tuple[str, str]:
         """Generate a natural language plan + code in the same LLM call and split them apart."""
-        plan_and_code_result = await Query().with_mcp(self._mcp_docs).with_system(
-            "Search OmniRec, Lenskit, and RecBole documentation for API usage examples and tutorials before writing code. "
-            "Focus on user guides and practical examples, not internal implementations."
-        ).run(prompt, PlanAndCode)
+        plan_and_code_result = (
+            await Query()
+            .with_mcp(self._mcp_docs)
+            .with_system(
+                "Search OmniRec, Lenskit, and RecBole documentation for API usage examples and tutorials before writing code. "
+                "Focus on user guides and practical examples, not internal implementations."
+            )
+            .run(prompt, PlanAndCode)
+        )
 
         nl_text = plan_and_code_result.nl_text
-        code = plan_and_code_result.code
+        code = strip_markdown_fences(plan_and_code_result.code)
         return nl_text, code
 
     async def _select_datasets(self) -> list[str]:
@@ -364,9 +369,14 @@ class MinimalAgent:
                 f"Here are all available datasets with their identifiers and brief statistics:\n{get_datasets_table()}"
             )
         }
-        result = await Query().with_mcp(self._mcp_docs).with_system(
-            "If you need information about dataset characteristics or recommender system domains, search the OmniRec documentation for dataset usage."
-        ).run(prompt, SelectDatasets)
+        result = (
+            await Query()
+            .with_mcp(self._mcp_docs)
+            .with_system(
+                "If you need information about dataset characteristics or recommender system domains, search the OmniRec documentation for dataset usage."
+            )
+            .run(prompt, SelectDatasets)
+        )
         return result.selected_datasets
 
     async def _set_code_requirements(self):
@@ -393,9 +403,14 @@ class MinimalAgent:
         6. Success Criteria: A successful experiment means the code is technically AND conceptually correct and follows best practices, runs without errors, and produces meaningful results that align with the research task. The data splitting, algorithm configuration and evaluation MUST BE suitable for the provided data (explicit or implicit) and the research task.
         7. Style: Avoid vague and verbose language. Keep each requirement as concise and precise as possible.
         """
-        requirements_result = await Query().with_mcp(self._mcp_docs).with_system(
-            "Search documentation technical details of the OmniRec framework and selected datasets to ensure requirements are feasible. Prioritize implementation guides and API references."
-        ).run(requirements_prompt, CodeRequirements)
+        requirements_result = (
+            await Query()
+            .with_mcp(self._mcp_docs)
+            .with_system(
+                "Search documentation technical details of the OmniRec framework and selected datasets to ensure requirements are feasible. Prioritize implementation guides and API references."
+            )
+            .run(requirements_prompt, CodeRequirements)
+        )
         if len(requirements_result.requirements) == 0:
             self.code_requirements = "No specific requirements provided."
         else:
@@ -423,9 +438,14 @@ class MinimalAgent:
            - Focus: Requirements focus on successful experiment execution and meaningful results.
         2. Refinement: Fix any issues found. Keep requirements that already meet the criteria unchanged.
         """
-        reflection_result = await Query().with_mcp(self._mcp_docs).with_system(
-            "Verify requirements against documented best practices. Search the documentation to make sure that the technical details of the requirements are correct."
-        ).run(reflection_prompt, CodeRequirements)
+        reflection_result = (
+            await Query()
+            .with_mcp(self._mcp_docs)
+            .with_system(
+                "Verify requirements against documented best practices. Search the documentation to make sure that the technical details of the requirements are correct."
+            )
+            .run(reflection_prompt, CodeRequirements)
+        )
         if len(reflection_result.requirements) == 0:
             self.code_requirements = "No specific requirements provided."
         else:
@@ -444,10 +464,10 @@ class MinimalAgent:
                 "Focus on identifying execution failures, errors, or other issues that would prevent the code from working properly."
             ),
             "Research Task": self.task_desc,
-            "Implementation": wrap_code(node.code),
-            "Execution Output": wrap_code(
-                node.term_out if node.term_out else "No output generated", lang=""
-            ),
+            "Implementation": node.code,
+            "Execution Output": node.term_out
+            if node.term_out
+            else "No output generated",
             "Instructions": [
                 "Carefully analyze the execution output for signs of bugs or failures:",
                 "- Syntax errors, import errors, or runtime exceptions",
@@ -462,9 +482,14 @@ class MinimalAgent:
         bug_feedback = ""
 
         try:
-            review_result = await Query().with_mcp(self._mcp_docs).with_system(
-                "When diagnosing bugs, search for usage examples in documentation. Look for common error patterns and correct API usage."
-            ).run(review_prompt, ReviewFunction)
+            review_result = (
+                await Query()
+                .with_mcp(self._mcp_docs)
+                .with_system(
+                    "When diagnosing bugs, search for usage examples in documentation. Look for common error patterns and correct API usage."
+                )
+                .run(review_prompt, ReviewFunction)
+            )
 
             # Update node with review results
             node.is_buggy = review_result.is_bug
@@ -518,14 +543,19 @@ class MinimalAgent:
                 ),
                 "Requirement": req.description,
                 "Research Task": self.task_desc,
-                "Implementation": wrap_code(node.code),
-                "Execution output": wrap_code(node.term_out, lang=""),
+                "Implementation": node.code,
+                "Execution output": node.term_out,
             }
 
             try:
-                scoring_result = await Query().with_mcp(self._mcp_docs).with_system(
-                    "Check implementation against documented APIs and examples. Search for usage documentation to verify correctness, prioritizing tutorials and user guides over source code."
-                ).run(scoring_prompt, ScoreCode)
+                scoring_result = (
+                    await Query()
+                    .with_mcp(self._mcp_docs)
+                    .with_system(
+                        "Check implementation against documented APIs and examples. Search for usage documentation to verify correctness, prioritizing tutorials and user guides over source code."
+                    )
+                    .run(scoring_prompt, ScoreCode)
+                )
 
                 req.is_fulfilled = scoring_result.fulfilled
                 req.feedback = scoring_result.feedback
@@ -600,11 +630,10 @@ class MinimalAgent:
                 "If the available information is insufficient, explain the limitation clearly and remain factual."
             ),
             "User Request": user_request,
-            "Experiment Code": wrap_code(node.code),
-            "Experiment Output": wrap_code(
-                node.term_out if node.term_out else "No experiment output available.",
-                lang="",
-            ),
+            "Experiment Code": node.code,
+            "Experiment Output": node.term_out
+            if node.term_out
+            else "No experiment output available.",
             "Instructions": [
                 "1. Use the code to interpret what the experiment did and what metrics or results are relevant.",
                 "2. Read the output carefully and extract factual findings that answer the user request.",
@@ -615,6 +644,11 @@ class MinimalAgent:
             ],
         }
 
-        return await Query().with_mcp(self._mcp_docs).with_system(
-            "If you need to explain results or metrics, search for documentation about evaluation metrics and their interpretation. Focus on user-facing explanations."
-        ).run(summary_prompt)
+        return (
+            await Query()
+            .with_mcp(self._mcp_docs)
+            .with_system(
+                "If you need to explain results or metrics, search for documentation about evaluation metrics and their interpretation. Focus on user-facing explanations."
+            )
+            .run(summary_prompt)
+        )
