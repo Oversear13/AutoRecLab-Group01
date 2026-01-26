@@ -126,6 +126,17 @@ class TreeSearch:
         (node_dir / "out.log").write_text("".join(exec_result.term_out))
         (node_dir / "exec_result.pkl").write_bytes(pickle.dumps(exec_result))
 
+        # Copy all generated files from the working directory to checkpoint for this node
+        working_dir = Path(self._workspace) / "working"
+        if working_dir.exists():
+            generated_dir = mkdir(node_dir / "generated")
+            try:
+                # Copy all contents of working directory to generated subdirectory
+                shutil.copytree(working_dir, generated_dir, dirs_exist_ok=True)
+                logger.debug(f"Copied generated files from {working_dir} to {generated_dir}")
+            except Exception as e:
+                logger.warning(f"Failed to copy artifacts: {e}")
+
         await self._minimal_agent.score_code(node, exec_result)
         return node
 
