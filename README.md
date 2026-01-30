@@ -1,3 +1,8 @@
+> [!IMPORTANT]
+> **Looking for the latest features?** This branch contains the current stable release aka. **AutoRecLab v1**. 
+> For active development and upcoming changes, please switch to the [`develop`](../../tree/develop) branch.
+
+
 # AutoRecLab v1: Towards an Autonomous Recommender-Systems Researcher
 
 An autonomous AI agent that uses tree search to iteratively develop, debug, and improve code implementations for recommender systems research tasks.
