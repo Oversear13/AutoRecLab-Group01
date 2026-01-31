@@ -57,7 +57,10 @@ class Query:
             self._temperature = temperature
 
         self._max_iterations = max_iterations
-
+        
+        self._mode = config.local_llm.llm_mode
+        self._local_model=config.local_llm.local_model
+        self._local_base_url=config.local_llm.base_url
     def with_tool(self, *tool: BaseTool) -> Self:
         self._tools.extend(tool)
         return self
@@ -91,7 +94,16 @@ class Query:
         else:
             response_format = ProviderStrategy(response_schema, strict=self._strict)
 
-        model = ChatOpenAI(model=self._model, temperature=self._temperature)
+        if self._mode != "local":
+            model = ChatOpenAI(model=self._model, temperature=self._temperature)
+        else:
+            model = ChatOpenAI(
+                model=self._local_model,
+                temperature=self._temperature,
+                base_url=self._local_base_url,
+                api_key=""
+            )
+        
         agent = create_agent(
             model=model,
             tools=tools,

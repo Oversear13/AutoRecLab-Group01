@@ -15,3 +15,9 @@ k_fold_validation = 1
 [agent.code]
 model = "gpt-5.2"
 model_temp = 1.0
+
+[local_llm]
+llm_mode = "local" #local or api
+base_url = "http://host.docker.internal:1234/v1"
+local_model = "openai/gpt-oss-20b"
+local_embedding_model = "text-embedding-embeddinggemma-300m-qat"

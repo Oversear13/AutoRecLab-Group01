@@ -1,9 +1,18 @@
 from pathlib import Path
-
 import tomli_w
 from pydantic_settings import BaseSettings, SettingsConfigDict, TomlConfigSettingsSource
-
+from typing import Literal
 CONFIG_PATH = Path("config.toml")
+
+from pydantic import BaseModel, Field
+import os
+
+# Local-only LLM config
+class LocalLLMConfig(BaseModel):
+    llm_mode: Literal["api", "local"]
+    base_url: str 
+    local_model: str
+    local_embedding_model: str
 
 
 class TreeSearchConfig(BaseSettings):
@@ -31,6 +40,7 @@ class Config(BaseSettings):
     model_config = SettingsConfigDict(
         env_prefix="ARL_", env_nested_delimiter="__", toml_file=CONFIG_PATH
     )
+    local_llm: LocalLLMConfig
 
     out_dir: str = "./out"
     treesearch: TreeSearchConfig = TreeSearchConfig()

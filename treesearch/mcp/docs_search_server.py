@@ -5,10 +5,24 @@ from dotenv import load_dotenv
 from langchain_community.vectorstores import FAISS
 from langchain_openai import OpenAIEmbeddings
 from mcp.server.fastmcp import FastMCP
+from config import get_config
 
 load_dotenv()
 mcp = FastMCP("Documentation search")
-embedding_model = OpenAIEmbeddings(model="text-embedding-3-large")
+
+config = get_config()
+
+if config.local_llm.llm_mode != "local":
+    embedding_model = OpenAIEmbeddings(model="text-embedding-3-large")
+
+else:
+    embedding_model = OpenAIEmbeddings(
+        model=config.local_llm.local_embedding_model,
+        base_url=config.local_llm.base_url,
+        api_key="",
+        tiktoken_enabled=False,
+        check_embedding_ctx_length=False,
+            )
 
 VECTOR_STORES_BASE_PTH = Path("./ragEmbeddings")
 VECTOR_STORE_NAMES = Literal["omnirec", "lenskit", "recbole"]

@@ -7,7 +7,7 @@ from langchain_community.vectorstores import FAISS
 from langchain_openai import OpenAIEmbeddings
 
 from cli.embeddings.preprocessor import GitRepoPreprocessor, Preprocessor
-
+from config import get_config
 
 def main():
     load_dotenv()
@@ -42,13 +42,24 @@ def main():
     )
 
     args = parser.parse_args()
-
+    config = get_config()
     if args.sub_command == "generate":
         if args.all:
             for dest in generator_destinations.keys():
                 setattr(args, dest, True)
 
-        embedding_model = OpenAIEmbeddings(model=args.embedding_model)
+        if config.local_llm.llm_mode != "local":
+            embedding_model = OpenAIEmbeddings(model=args.embedding_model)
+
+        else:
+            embedding_model = OpenAIEmbeddings(
+                model=config.local_llm.local_embedding_model,
+                base_url=config.local_llm.base_url,
+                api_key="",
+                tiktoken_enabled=False,
+                check_embedding_ctx_length=False,
+            )
+
         for dest, key in generator_destinations.items():
             if getattr(args, dest):
                 vector_store_pth: Path = args.out / dest
