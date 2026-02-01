@@ -55,7 +55,7 @@ def main():
             embedding_model = OpenAIEmbeddings(
                 model=config.local_llm.local_embedding_model,
                 base_url=config.local_llm.base_url,
-                api_key="",
+                api_key="Not needed",
                 tiktoken_enabled=False,
                 check_embedding_ctx_length=False,
             )
