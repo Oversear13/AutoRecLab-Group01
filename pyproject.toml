@@ -36,8 +36,17 @@ dependencies = [
     "tomli-w>=1.2.0",
 ]
 
+[project.scripts]
+embeddings = "cli.embeddings.main:main"
+
 [tool.uv.workspace]
 members = ["packages/dataloader"]
 
+[tool.uv]
+package = true
+
 [tool.uv.sources]
-dataloader = { workspace = true }
+dataloader = { workspace = true, editable = true }
+
+[tool.setuptools]
+packages = ["cli", "treesearch", "utils"]
