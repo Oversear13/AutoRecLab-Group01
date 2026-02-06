@@ -47,6 +47,7 @@ package = true
 
 [tool.uv.sources]
 dataloader = { workspace = true, editable = true }
+omnirec = { git = "https://github.com/ISG-Siegen/OmniRec.git", rev = "develop" }
 
 [tool.setuptools]
 packages = ["cli", "treesearch", "utils"]
