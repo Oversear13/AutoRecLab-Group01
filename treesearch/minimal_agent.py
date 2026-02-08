@@ -72,15 +72,14 @@ class MinimalAgent:
     @property
     def _prompt_environment(self):
         pkgs = [
+            "Primary: omnirec==0.2.0",
             "numpy==1.26.4",
             "numba==0.58.1",
             "pandas==2.3.2",
             "scipy==1.16.2",
             "scikit-learn==1.7.1",
             "lenskit==2025.6.2",
-            "omnirec==0.2.0",
         ]
-        random.shuffle(pkgs)
         pkg_str = ", ".join([f"`{p}`" for p in pkgs])
 
         env_prompt = {
@@ -92,6 +91,7 @@ class MinimalAgent:
     def _prompt_impl_guideline(self):
         impl_guideline = [
             "Implementation Guidelines:",
+            "0. Documentation Protocol: OmniRec is the primary framework. Before writing a single line of code, you MUST use the documentation tool to search for the specific classes and methods you plan to use. Do not guess parameters.",
             "1. Python Framework - !CRITICAL!: You have access to the OmniRec python library, a new comprehensive recommender system framework. Within this framework you can use algorithms from Lenskit, RecBole, RecPack and Elliot. If you use algorithms from these libraries, you MUST use OmniRec.",
             f"2. Datasets: Use only the following selected datasets for training and evaluation: {self.selected_datasets}",
             "3. Code Structure:",
@@ -200,11 +200,10 @@ class MinimalAgent:
     async def _draft(self) -> Node:
         prompt: Any = {
             "Introduction": (
-                "You are a recommender systems researcher who is looking to publish a paper that will contribute significantly to the field."
-                "Your first task is to write a python code to implement a solid baseline based on your research task and code requirements provided below, "
-                "from data preparation to model training, as well as evaluation and visualization. "
-                "Focus on getting a simple but working implementation first, before any sophisticated improvements. "
-                "We will explore more advanced variations in later stages."
+                "You are a meticulous Recommender Systems Engineer and Researcher. "
+                "Your task is to: 1) Research the correct API usage for the given task, "
+                "2) Design a baseline, and 3) Implement it. "
+                "Do not implement code based on memory; always verify method signatures via the provided search tool."
             ),
             "Research task": self.task_desc,
             "Code Requirements": self.code_requirements
@@ -269,9 +268,7 @@ class MinimalAgent:
 
         prompt: Any = {
             "Introduction": (
-                "You are an experienced recommender systems researcher. Your previous code for research experiment had a bug, so based on the information below, you should revise it in order to fix this bug. "
-                "Your response should be an implementation outline in natural language,"
-                " followed by a single markdown code block which implements the bugfix/solution."
+                "You are a Senior Debugging Engineer. Your goal is to resolve execution errors in a recommender system script. You must treat the 'Execution output' as truth and the 'Previous implementation' as potentially fundamentally flawed API-wise. Do not assume the previous code's use of libraries was correct."
             ),
             "Research task": self.task_desc,
             "Previous (buggy) implementation": parent_node.code,
@@ -282,10 +279,10 @@ class MinimalAgent:
         }
         prompt["Instructions"] |= {
             "Bugfix improvement sketch guideline": [
-                "You should write a brief natural language description (3-5 sentences) of how the issue in the previous implementation can be fixed.",
-                "Pay special attention to the bug analysis and scoring feedback provided above.",
-                "Address the specific errors or issues identified in the execution output.",
-                "Don't suggest to do EDA.",
+                "1. ERROR DIAGNOSIS: Analyze the 'Execution output' specifically for API errors (AttributeError, TypeError, etc.).",
+                "2. DOCUMENTATION VERIFICATION: If the error involves OmniRec, Lenskit, or RecBole, you MUST search the documentation for the correct class/method signature before writing the fix.",
+                "3. EXPLAIN THE FIX: Write 3-5 sentences describing the root cause and the verified solution. Cite the documentation if an API change was made.",
+                "4. DO NOT GUESS: If the documentation does not show the method you need, search for alternatives or 'tutorials' in the MCP server.",
             ],
         }
         prompt["Instructions"] |= self._prompt_impl_guideline
@@ -323,9 +320,11 @@ class MinimalAgent:
         }
 
         prompt["Instructions"] |= {
-            "Improvement guidelines": [
-                "Based on the scoring feedback above, focus on the requirements that need improvement.",
-                "Your goal is to enhance the implementation while maintaining its working functionality.",
+            "Refactoring & Compliance Guidelines": [
+                "1. ANALYZE FEEDBACK: Map each piece of feedback from the 'Performance Analysis' to a specific line or block in your previous code.",
+                "2. CONSULT THE SOURCE: For every requirement that was marked as 'unsatisfactory,' search the documentation for the 'canonical' way to implement that feature.",
+                "3. REFACTOR, DON'T PATCH: Do not just add 'if' statements to hide errors. Rewrite the implementation to align with the framework's intended API usage as found in the docs.",
+                "4. PRESERVE LOGIC: Ensure the research task's scientific logic remains intact while updating the code structure to meet the requirements.",
             ]
         }
         prompt["Instructions"] |= self._prompt_impl_guideline
@@ -347,8 +346,19 @@ class MinimalAgent:
             await Query()
             .with_mcp(self._mcp_docs)
             .with_system(
-                "Search OmniRec, Lenskit, and RecBole documentation for API usage examples and tutorials before writing code. "
-                "Focus on user guides and practical examples, not internal implementations."
+                "You are a Senior Recommender Systems Engineer specializing in the OmniRec library.\n"
+                "You work in a strict 'Test-Driven' and 'Doc-Driven' environment.\n"
+                "### OPERATIONAL CONSTRAINTS:\n"
+                "1. MANDATORY SEARCH: You are prohibited from generating code until you have performed at least two search queries.\n"
+                "- Query 1: Broad search for the class/tutorial.\n"
+                "- Query 2: Specific search for method signatures and parameter types.\n"
+                "2. CITATION RULE: In your 'nl_text' field, you MUST start with a section titled '## Documentation Verified'. List every OmniRec method you used and the parameters you confirmed via the search tool.\n"
+                "3. THE 'NO-GUESS' ARCHITECTURE: If the documentation tool does not return a specific parameter you need, do not 'hallucinate' it. Instead, search for 'OmniRec [ClassName] examples' to see it in context.\n"
+                "4. VERSION AWARENESS: You are using OmniRec v0.2.0. Disregard pre-trained knowledge of Lenskit or RecBole if it conflicts with the current OmniRec documentation retrieved via MCP.\n"
+                "### THE THREE-PHASE PROTOCOL:\n"
+                "Phase 1 (Identify): Analyze the task and list the 3-5 key OmniRec components needed.\n"
+                "Phase 2 (Verify): For EACH component, call the MCP tool. If the search result is a list of methods, you MUST perform a follow-up search on the specific method signature/\n"
+                "Phase 3 (Implement): Only when you can 'see' the documentation in your context window are you allowed to populate the PlanAndCode fields."
             )
             .run(prompt, PlanAndCode)
         )
