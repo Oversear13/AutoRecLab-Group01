@@ -18,7 +18,7 @@ def main():
     generate = sub.add_parser("generate")
 
     generators: dict[str, Preprocessor] = {
-        "--omnirec": GitRepoPreprocessor("https://github.com/ISG-Siegen/OmniRec"),
+        "--omnirec": GitRepoPreprocessor("https://github.com/ISG-Siegen/OmniRec", "develop"),
         "--lenskit": GitRepoPreprocessor(
             "https://github.com/lenskit/lkpy.git", "main"
         ),
@@ -49,16 +49,16 @@ def main():
                 setattr(args, dest, True)
 
         if config.local_llm.embedding_mode == "api":
+
             embedding_model = OpenAIEmbeddings(model=args.embedding_model)
 
         else:
             embedding_model = OpenAIEmbeddings(
                 model=config.local_llm.local_embedding_model,
                 base_url=config.local_llm.base_url,
-                api_key="Not needed",
-                tiktoken_enabled=False,
+                api_key="not needed",
                 check_embedding_ctx_length=False,
-            )
+                    )
 
         for dest, key in generator_destinations.items():
             if getattr(args, dest):

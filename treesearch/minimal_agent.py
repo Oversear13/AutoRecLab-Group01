@@ -347,18 +347,47 @@ class MinimalAgent:
         )
 
     async def plan_and_code_query(self, prompt, retries=3) -> tuple[str, str]:
-        """Generate a natural language plan + code in the same LLM call and split them apart."""
-        plan_and_code_result = await Query().with_mcp(self._mcp_docs).with_system(
-            "CRITICAL: Before writing code, search OmniRec and other documentation to verify: "
-            "1) Exact function signatures (parameter names, types, valid value ranges), "
-            "2) Object attributes (use public APIs, not private _attributes), "
-            "3) Data structures."
-            "Never guess - always verify in docs."
-        ).run(prompt, PlanAndCode)
+        # 1) Retrieve docs first (NO response schema, allow tool calling)
+        rag_prompt = {
+            "Instruction": (
+                "Use the tool `documentation_query` to fetch the exact OmniRec APIs needed "
+                "for this task: loading datasets, converting to implicit (if needed), splitting 80/10/10, "
+                "training NeuMF via OmniRec (not direct RecBole import), evaluating Recall@10 and NDCG@10, "
+                "and producing boxplots + saving raw results.\n"
+                "Call the tool multiple times if needed (omnirec + recbole). "
+                "Return ONLY the retrieved excerpts and their sources."
+            ),
+            "Task": self.task_desc,
+            "Context": prompt,
+        }
 
-        nl_text = plan_and_code_result.nl_text
-        code = plan_and_code_result.code
-        return nl_text, code
+        # IMPORTANT: run without schema so the model can call tools
+        retrieved_docs_text = await (
+            Query()
+            .with_mcp(self._mcp_docs)
+            .with_system(
+                "You MUST call documentation_query. Do not write code yet."
+            )
+            .run(rag_prompt)  # <-- no PlanAndCode schema here
+        )
+
+        # 2) Now produce structured PlanAndCode with docs injected (schema ON)
+        prompt_with_docs = dict(prompt)
+        prompt_with_docs["Retrieved Docs (authoritative)"] = retrieved_docs_text
+
+        plan_and_code_result = await (
+            Query()
+            .with_mcp(self._mcp_docs)
+            .with_system(
+                "Use ONLY the Retrieved Docs for OmniRec/RecBole API usage. "
+                "Do not guess any imports or function names. "
+                "Now produce a PlanAndCode response."
+            )
+            .run(prompt_with_docs, PlanAndCode)
+        )
+
+        return plan_and_code_result.nl_text, plan_and_code_result.code
+
 
     async def _select_datasets(self) -> list[str]:
         """Select appropriate datasets for the research task using LLM."""

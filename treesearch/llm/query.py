@@ -59,8 +59,8 @@ class Query:
             self._temperature = config.agent.code.model_temp
         else:
             self._temperature = temperature
-
-        self._max_iterations = max_iterations
+        #TODO REMOVE HARD CODE
+        self._max_iterations = 50
         
         self._mode = config.local_llm.llm_mode
         self._local_model=config.local_llm.local_model
@@ -96,7 +96,7 @@ class Query:
         if response_schema is None:
             response_format = None
         else:
-            response_format = ProviderStrategy(response_schema, strict=self._strict)
+            response_format = ProviderStrategy(response_schema, strict=False)
 
         # Set up the model based on mode
         if self._mode != "local":
@@ -108,6 +108,7 @@ class Query:
                 base_url=self._local_base_url,
                 api_key="not needed",
                 use_responses_api=False
+            
             )
         
         agent = create_agent(
@@ -115,6 +116,7 @@ class Query:
             tools=tools,
             response_format=response_format,
             system_prompt=self._system_prompt,
+            
         )
         # TODO make this more elegant instead of using an large if / else
 

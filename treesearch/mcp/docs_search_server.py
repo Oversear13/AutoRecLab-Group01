@@ -7,12 +7,21 @@ from langchain_openai import OpenAIEmbeddings
 from mcp.server.fastmcp import FastMCP
 from config import get_config
 
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
+)
+
+logger = logging.getLogger("rag")
 load_dotenv()
 mcp = FastMCP("Documentation search")
 
 config = get_config()
 
 if config.local_llm.embedding_mode == "api":
+    
     embedding_model = OpenAIEmbeddings(model="text-embedding-3-large")
 
 else:
@@ -20,9 +29,9 @@ else:
         model=config.local_llm.local_embedding_model,
         base_url=config.local_llm.base_url,
         api_key="not needed",
-        tiktoken_enabled=False,
         check_embedding_ctx_length=False,
             )
+
 
 VECTOR_STORES_BASE_PTH = Path("./ragEmbeddings")
 VECTOR_STORE_NAMES = Literal["omnirec", "lenskit", "recbole"]
@@ -47,34 +56,45 @@ VECTOR_STORES: dict[str, FAISS] = {
 
 
 @mcp.tool()
-def documentation_query(library: VECTOR_STORE_NAMES, query: str, k: int = 4) -> str:
-    """Queries the documentation and code of a given library
+def documentation_query(
+    library: VECTOR_STORE_NAMES, query: str, k: int = 4
+) -> dict:
+    logger.info("RAG query called")
+    logger.info("Library: %s", library)
+    logger.info("Query: %s", query)
+    logger.info("Top-k: %d", k)
 
-    Args:
-        library (str): Target documentation store to search. Needs to be one of: ["omnirec", "lenskit", "recbole"]
-        query (str): Natural-language search query.
-        k (int, optional): Number of top matching documents to return. Defaults to 4.
+    results = VECTOR_STORES[library].similarity_search_with_score(query, k=k)
 
-    Returns:
-        str: Top-k relevant documentation entries formatted in a string.
-    """
-    vector_store = VECTOR_STORES.get(library)
-    if vector_store is None:
-        return f"Invalid library! The library parameter needs to be one of: {VECTOR_STORE_NAMES}"
+    logger.info("Retrieved %d results", len(results))
 
-    results = vector_store.similarity_search_with_score(query, k)
-
-    final_output = f"Found {len(results)} relevant documentation sections:\n\n"
+    formatted_results = []
     for i, (doc, score) in enumerate(results, 1):
         source = doc.metadata.get("source", "Unknown")
-        # Convert distance to similarity score (lower distance = higher similarity)
-        similarity = 1 / (1 + score)  # Simple conversion
 
-        final_output += f"--- Result {i} (Relevance: {similarity:.2%}) ---\n"
-        final_output += f"Source: {source}\n"
-        final_output += f"Content:\n{doc.page_content}\n\n"
+        logger.info("Result %d", i)
+        logger.info("  Source: %s", source)
+        logger.info("  Score (distance): %.6f", score)
+        logger.info("  Preview: %s", doc.page_content[:200].replace("\n", " "))
 
-    return final_output
+        formatted_results.append(
+            {
+                "source": source,
+                "score": float(score),
+                "text": doc.page_content,
+                "metadata": doc.metadata,
+            }
+        )
+
+    response = {
+        "library": library,
+        "query": query,
+        "results": formatted_results,
+    }
+
+    logger.info("RAG response ready and returned to agent")
+    return response
+
 
 
 def main():

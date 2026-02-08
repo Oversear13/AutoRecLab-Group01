@@ -20,5 +20,5 @@ model_temp = 1.0
 llm_mode = "local" #local or api
 embedding_mode = "local" #local or api
 base_url = "http://host.docker.internal:1234/v1"
-local_model = "openai/gpt-oss-20b"
-local_embedding_model = "enacimie/text-embedding-qwen3-embedding-0.6b"
+local_model = "qwen/qwen3-coder-30b"
+local_embedding_model = "text-embedding-embeddinggemma-300m-qat"

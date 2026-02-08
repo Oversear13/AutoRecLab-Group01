@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "transformers",
     "anthropic>=0.68.0",
     "anytree>=2.13.0",
     "backoff>=2.2.1",
@@ -26,7 +27,7 @@ dependencies = [
     "mcp[cli]>=1.24.0",
     "numpy>=1.26.4",
     "openai>=1.108.1",
-    "omnirec==0.2.0",
+    "omnirec",
     "pydantic-settings>=2.10.1",
     "pytest>=9.0.2",
     "python-dotenv>=1.2.0",
@@ -41,3 +42,4 @@ members = ["packages/dataloader"]
 
 [tool.uv.sources]
 dataloader = { workspace = true }
+omnirec = { git = "https://github.com/ISG-Siegen/OmniRec.git", branch = "develop" }
