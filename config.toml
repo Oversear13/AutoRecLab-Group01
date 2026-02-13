@@ -3,7 +3,7 @@ out_dir = "./out"
 [treesearch]
 num_draft_nodes = 3
 debug_prob = 0.3
-epsilon = 0.2
+epsilon = 0.4
 max_iterations = 10
 
 [exec]
