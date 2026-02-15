@@ -89,6 +89,11 @@ class Node(NodeMixin):
     # ---- execution time feedback ----
     exec_time_feedback: str = field(default="")
 
+    # ---- type checking info ----
+    type_check_attempts: int = field(default=0)
+    type_check_passed: bool = field(default=False)
+    type_check_errors: Optional[str] = field(default=None)
+
     # ---- ablation study ----
     ablation_name: Optional[str] = field(default=None)
 
