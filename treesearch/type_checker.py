@@ -15,30 +15,17 @@ class TypeCheckResult:
     error_count: int
     errors: list[dict]
     raw_output: str
+    full_output: str = ""
 
     def format_errors_for_llm(self) -> str:
+        """Return the full rustc-like ty output for the LLM"""
         if not self.has_errors:
             return "No type checking errors found."
 
-        error_messages = []
-        error_messages.append(f"Found {self.error_count} type checking error(s):\n")
-
-        for i, error in enumerate(self.errors, 1):
-            # Extract relevant information from the error dict
-            line = error.get("line", "?")
-            column = error.get("column", "?")
-            message = error.get("message", "Unknown error")
-            rule = error.get("rule", "")
-            severity = error.get("severity", "error")
-
-            error_messages.append(
-                f"{i}. [{severity.upper()}] Line {line}, Column {column}: {message}"
-            )
-            if rule:
-                error_messages.append(f"   Rule: {rule}")
-            error_messages.append("")
-
-        return "\n".join(error_messages)
+        return (
+            f"Found {self.error_count} type checking error(s).\n"
+            f"Full ty output:\n\n{self.full_output}"
+        )
 
 
 class TypeChecker:
@@ -73,12 +60,12 @@ class TypeChecker:
         with open(file_path, "w") as f:
             f.write(code)
 
-        # Runs ty check with full output format
-        cmd = ["uvx", "ty", "check", "--output-format", "concise", str(file_path)]
+        concise_cmd = ["uv", "run", "ty", "check", "--no-progress", "--output-format", "concise", str(file_path)]
+        full_cmd = ["uv", "run", "ty", "check", "--no-progress", str(file_path)]
 
         try:
             result = subprocess.run(
-                cmd,
+                concise_cmd,
                 cwd=self.working_dir,
                 capture_output=True,
                 text=True,
@@ -87,6 +74,18 @@ class TypeChecker:
 
             raw_output = result.stdout + result.stderr
             logger.debug(f"ty output: {raw_output}")
+
+            # Run full format for rich LLM context
+            full_result = subprocess.run(
+                full_cmd,
+                cwd=self.working_dir,
+                capture_output=True,
+                text=True,
+                timeout=60,
+            )
+
+            full_output = full_result.stdout + full_result.stderr
+            logger.debug(f"ty full output: {full_output}")
 
             # Parse text output
             errors = []
@@ -165,6 +164,7 @@ class TypeChecker:
                 error_count=error_count,
                 errors=errors,
                 raw_output=raw_output,
+                full_output=full_output,
             )
 
         except subprocess.TimeoutExpired:

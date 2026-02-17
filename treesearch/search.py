@@ -142,14 +142,13 @@ class TreeSearch:
                 if not type_check_result.has_errors:
                     logger.info("Type checking passed!")
                     node.type_check_passed = True
-                    node.code = current_code  # Update node with hopefully fixed code
                     break
                 
                 logger.warning(
                     f"Type checking found {type_check_result.error_count} error(s) "
                     f"(attempt {attempt}/{max_type_check_attempts})"
                 )
-                node.type_check_errors = type_check_result.format_errors_for_llm()
+                node.type_check_results.append(type_check_result)
                 
                 if attempt == max_type_check_attempts:
                     logger.warning(
@@ -171,6 +170,10 @@ class TreeSearch:
         else:
             logger.info("Type checking is disabled. Enable it in the config to refine code before execution.")
             node.type_check_passed = None  # type: ignore
+        
+        # Always sync node.code with current_code so that what we execute
+        # matches what the agent sees later
+        node.code = current_code
         
         exec_result = self._interpreter.run(current_code)
         logger.debug(exec_result)
