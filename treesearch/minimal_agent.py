@@ -25,6 +25,11 @@ from langgraph.errors import GraphRecursionError
 
 logger = _ROOT_LOGGER.getChild("nodeAgent")
 
+def truncate_text(s: str, max_chars: int) -> str:
+    s = s or ""
+    if len(s) <= max_chars:
+        return s
+    return s[:max_chars] + "\n...[truncated]..."
 
 class MinimalAgent:
     """A minimal agent class that only contains what's needed for processing nodes"""
@@ -282,6 +287,13 @@ class MinimalAgent:
         }
 
         _, fixed_code = await self.plan_and_code_query(prompt)
+        print("##### DEBUG #####")
+        print(fixed_code)
+        print("##### DEBUG #####")
+        print(code)
+        print("##### DEBUG #####")
+
+
         return fixed_code
 
     def _new_node(self, plan: str, code: str, parent: Optional[Node] = None):
@@ -295,55 +307,52 @@ class MinimalAgent:
         # --- 1) Tool/RAG phase: bounded recursion so it cannot spiral forever ---
         rag_prompt = {
             "Instruction": (
-            "Decide you need too Use the tool `documentation_query` to retrieve authoritative documentation excerpts "
-            "needed to implement the user’s request.\n\n"
-            "Output requirements:\n"
-            "- Return ONLY the retrieved excerpts (verbatim or near-verbatim) and their sources/links.\n"
-            "- Do NOT write code, plans, or analysis.\n"
-            "- Do NOT infer or invent APIs; rely strictly on retrieved documentation."
+                "Decide you need too Use the tool `documentation_query` to retrieve authoritative documentation excerpts "
+                "needed to implement the user’s request.\n\n"
+                "Output requirements:\n"
+                "- Return ONLY the retrieved excerpts (verbatim or near-verbatim) and their sources/links.\n"
+                "- Do NOT write code, plans, or analysis.\n"
+                "- Do NOT infer or invent APIs; rely strictly on retrieved documentation."
             ),
             "Task": self.task_desc,
             "Context": prompt,
         }
-        try:
-            retrieved_docs_text = await (
-                Query(max_iterations=25)
-                .with_mcp(self._mcp_docs)
-                .with_system("You can call documentation_query.\n"
+
+        # NOTE: if you applied the Query.run() change earlier (GraphRecursionError -> returns partial tool outputs),
+        # this call will return *some* text even when recursion is hit.
+        retrieved_docs_text = await (
+            Query(max_iterations=12)
+            .with_mcp(self._mcp_docs)
+            .with_system(
+                "You can call documentation_query.\n"
                 "You may call tools AT MOST 8 TIMES total.\n"
                 "if you have enough info, STOP calling tools and return the excerpts + sources.\n"
                 "If a tool call errors twice, stop immediately and return partial results.\n"
-                "Treat tool calls as a finite resource that costs a lot of reasources per call, therefore limit the number of toll calls and dotn call the tool if you can already perform the described task. \n"
-                "Do NOT write code.")
-                .run(rag_prompt)
+                "Treat tool calls as a finite resource that costs a lot of reasources per call, therefore limit the number of toll calls and dotn call the tool if you can already perform the described task.\n"
+                "Do NOT write code."
             )
-        except GraphRecursionError:
-            retrieved_docs_text = (    
-                "RAG phase aborted due to recursion limit."
-                "Proceed using prior knowledge and task description only.")
+            .run(rag_prompt)
+        )
 
+        # --- 2) Structured generation phase: MUST return code ---
+        # Hard-cap the amount of retrieved docs that enter the prompt to prevent n_ctx overflow.
+        # (Adjust sizes to your local server; 8k-12k chars is usually safe with n_ctx=16128.)
+        docs_for_codegen = truncate_text(retrieved_docs_text, 10000)
 
-        # --- 2) Structured generation phase: low recursion, ideally no tools needed ---
-        prompt_with_docs = dict(prompt)
-        prompt_with_docs["Retrieved Docs (authoritative)"] = retrieved_docs_text
+        prompt_with_docs = dict(prompt) if isinstance(prompt, dict) else {"Task": prompt}
+        prompt_with_docs["Retrieved Docs (authoritative, capped)"] = docs_for_codegen
 
         plan_and_code_result = await (
-            Query(max_iterations=6)  # ✅ smaller, faster; avoids long agent loops
-            .with_mcp(self._mcp_docs)
+            Query(max_iterations=40)  # higher limit for generation; not the RAG limit
+            # IMPORTANT: no MCP here; prevent tool loops and keep deterministic
             .with_system(
                 "You are a Senior Recommender Systems Engineer specializing in the OmniRec library.\n"
                 "You work in a strict 'Test-Driven' and 'Doc-Driven' environment.\n"
-                "### OPERATIONAL CONSTRAINTS:\n"
-                "1. MANDATORY SEARCH: You are prohibited from generating code until you have performed at least two search queries.\n"
-                "- Query 1: Broad search for the class/tutorial.\n"
-                "- Query 2: Specific search for method signatures and parameter types.\n"
-                "2. CITATION RULE: In your 'nl_text' field, you MUST start with a section titled '## Documentation Verified'. List every OmniRec method you used and the parameters you confirmed via the search tool.\n"
-                "3. THE 'NO-GUESS' ARCHITECTURE: If the documentation tool does not return a specific parameter you need, do not 'hallucinate' it. Instead, search for 'OmniRec [ClassName] examples' to see it in context.\n"
-                "4. VERSION AWARENESS: You are using OmniRec v0.2.0. Disregard pre-trained knowledge of Lenskit or RecBole if it conflicts with the current OmniRec documentation retrieved via MCP.\n"
-                "### THE THREE-PHASE PROTOCOL:\n"
-                "Phase 1 (Identify): Analyze the task and list the 3-5 key OmniRec components needed.\n"
-                "Phase 2 (Verify): For EACH component, call the MCP tool. If the search result is a list of methods, you MUST perform a follow-up search on the specific method signature/\n"
-                "Phase 3 (Implement): Only when you can 'see' the documentation in your context window are you allowed to populate the PlanAndCode fields."
+                "You MUST write working code at the end.\n"
+                "You are NOT allowed to call any tools in this phase.\n"
+                "Use ONLY the 'Retrieved Docs (authoritative, capped)' provided in the prompt.\n"
+                "If a required signature/detail is missing, make the most conservative assumption and clearly note it in nl_text.\n"
+                "Return a complete PlanAndCode response."
             )
             .run(prompt_with_docs, PlanAndCode)
         )
@@ -351,15 +360,6 @@ class MinimalAgent:
         nl_text = plan_and_code_result.nl_text
         code = strip_markdown_fences(plan_and_code_result.code)
         return nl_text, code
-    
-    # Alternative, shorter system prompt:
-    """
-        f"CRITICAL: Before writing code, search the respective documentation. You have access to comprehensive documentation for these libraries: {VECTOR_STORE_NAMES}. Always verify the following technical details in the documentation before using them in your code: "
-        "1) Exact function signatures (parameter names, types, valid value ranges), "
-        "2) Object attributes (use public APIs, not private _attributes), "
-        "3) Data structures."
-        "Never guess - always verify in docs."
-    """
 
     async def _select_datasets(self) -> list[str]:
         """Select appropriate datasets for the research task using LLM."""
