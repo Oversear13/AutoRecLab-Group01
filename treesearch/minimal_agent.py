@@ -120,9 +120,9 @@ class MinimalAgent:
                 "Do not implement code based on memory; always verify method signatures via the provided search tool."
             ),
             "Research task": self.task_desc,
-            "Code Requirements": self.code_requirements
-            if hasattr(self, "code_requirements")
-            else "",
+            "Code Requirements": (
+                self.code_requirements if hasattr(self, "code_requirements") else ""
+            ),
             "Memory": self.memory_summary if self.memory_summary else "",
             "Instructions": {},
         }
@@ -287,7 +287,7 @@ class MinimalAgent:
     async def plan_and_code_query(self, prompt, retries=3) -> tuple[str, str]:
         """Generate a natural language plan + code in the same LLM call and split them apart."""
         plan_and_code_result = (
-            await Query()
+            await Query(max_iterations=40)
             .with_mcp(self._mcp_docs)
             .with_system(
                 f"You are a Senior Recommender Systems Engineer specializing in the OmniRec library. "
@@ -433,9 +433,9 @@ class MinimalAgent:
             ),
             "Research Task": self.task_desc,
             "Implementation": node.code,
-            "Execution Output": node.term_out
-            if node.term_out
-            else "No output generated",
+            "Execution Output": (
+                node.term_out if node.term_out else "No output generated"
+            ),
             "Instructions": [
                 "Carefully analyze the execution output for signs of bugs or failures:",
                 "- Syntax errors, import errors, or runtime exceptions",
@@ -451,7 +451,7 @@ class MinimalAgent:
 
         try:
             review_result = (
-                await Query()
+                await Query(max_iterations=40)
                 .with_mcp(self._mcp_docs)
                 .with_system(
                     "Search for usage examples in documentation when diagnosing API-related bugs. Look for common error patterns and correct API usage."
@@ -517,7 +517,7 @@ class MinimalAgent:
 
             try:
                 scoring_result = (
-                    await Query()
+                    await Query(max_iterations=40)
                     .with_mcp(self._mcp_docs)
                     .with_system(
                         "Verify implementation against documented APIs when correctness is unclear. Reference usage documentation, prioritizing tutorials and user guides over source code."
@@ -599,9 +599,9 @@ class MinimalAgent:
             ),
             "User Request": user_request,
             "Experiment Code": node.code,
-            "Experiment Output": node.term_out
-            if node.term_out
-            else "No experiment output available.",
+            "Experiment Output": (
+                node.term_out if node.term_out else "No experiment output available."
+            ),
             "Instructions": [
                 "1. Use the code to interpret what the experiment did and what metrics or results are relevant.",
                 "2. Read the output carefully and extract factual findings that answer the user request.",
