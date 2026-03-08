@@ -21,15 +21,8 @@ from treesearch.mcp.docs_search_server import VECTOR_STORE_NAMES
 from treesearch.utils.response import strip_markdown_fences
 from utils.log import _ROOT_LOGGER
 from utils.path import mkdir
-from langgraph.errors import GraphRecursionError
 
 logger = _ROOT_LOGGER.getChild("nodeAgent")
-
-def truncate_text(s: str, max_chars: int) -> str:
-    s = s or ""
-    if len(s) <= max_chars:
-        return s
-    return s[:max_chars] + "\n...[truncated]..."
 
 class MinimalAgent:
     """A minimal agent class that only contains what's needed for processing nodes"""
@@ -296,8 +289,8 @@ class MinimalAgent:
             .with_mcp(self._mcp_docs)
             .with_system(
                 f"You are a Senior Recommender Systems Engineer specializing in the OmniRec library. "
-                f"Available documentation (OmniRec and libraries that OmniRec can use): {VECTOR_STORE_NAMES}.\n"
-                "\n"
+                f"Available documentation (OmniRec and libraries that OmniRec can use): {VECTOR_STORE_NAMES}. If using documentation_query make sure to not ad any whitespaces or characters to the vector store names.\n"
+                "Decide you need too Use the tool `documentation_query` to retrieve authoritative documentation excerpts ""\n"
                 "CRITICAL: You MUST use OmniRec for all recommender system functionality. Do NOT fall back to raw Lenskit, RecBole, or any other backend library directly. If you cannot find the right OmniRec API, search the documentation further — do not bypass OmniRec.\n"
                 "\n"
                 "Search documentation to verify API details. Process:\n"

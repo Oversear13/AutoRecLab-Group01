@@ -28,66 +28,7 @@ RT = TypeVar("RT", bound=ResponseFormatType)
 
 Prompt: TypeAlias = str | list["Prompt"] | dict[str, "Prompt"]
 
-from collections import deque
-from langchain_core.callbacks import BaseCallbackHandler
 
-class ToolOutputBuffer(BaseCallbackHandler):
-    """
-    Buffers ONLY documentation tool outputs (optional filter) and caps memory
-    so we never blow the model context when returning partial results.
-    """
-    def __init__(
-        self,
-        tool_name_whitelist: set[str] | None = None,
-        max_chunks: int = 12,
-        max_total_chars: int = 12_000,
-        max_chunk_chars: int = 2_000,
-    ) -> None:
-        self.tool_name_whitelist = tool_name_whitelist
-        self.max_total_chars = max_total_chars
-        self.max_chunk_chars = max_chunk_chars
-        self._chunks: deque[str] = deque(maxlen=max_chunks)
-
-    @property
-    def chunks(self) -> list[str]:
-        return list(self._chunks)
-
-    def on_tool_end(self, output, **kwargs) -> None:
-        # Try to identify tool name across LC versions
-        tool_name = (
-            kwargs.get("name")
-            or kwargs.get("tool")
-            or kwargs.get("tool_name")
-            or kwargs.get("serialized", {}).get("name")
-        )
-
-        if self.tool_name_whitelist and tool_name not in self.tool_name_whitelist:
-            return  # ignore non-doc tools (e.g., ListToolsRequest noise)
-
-        try:
-            text = output if isinstance(output, str) else str(output)
-        except Exception:
-            text = repr(output)
-
-        text = text.strip()
-        if not text:
-            return
-
-        # cap chunk size
-        if len(text) > self.max_chunk_chars:
-            text = text[: self.max_chunk_chars] + "\n...[truncated]..."
-
-        self._chunks.append(text)
-
-        # cap total chars
-        while sum(len(c) for c in self._chunks) > self.max_total_chars and self._chunks:
-            self._chunks.popleft()
-
-def truncate_text(s: str, max_chars: int) -> str:
-    s = s or ""
-    if len(s) <= max_chars:
-        return s
-    return s[:max_chars] + "\n...[truncated]..."
 @dataclass
 class MCPConnection:
     name: str
@@ -186,99 +127,94 @@ class Query:
 
         # Different execution path for local vs non-local LLMs
         # Recovery policy (tune per your local models)
-        if self._mode == "local":
-        # policy is only used for local runs
-            recovery = StructuredRecoveryPolicy(
-                max_attempts=3,
-                bad_markers=["commentary to=", "<|", "functions.", "}]**", "ListToolsRequest"],
-            )
-
-            tool_buffer = ToolOutputBuffer(
-            tool_name_whitelist={"documentation_query"},
-            max_chunks=12,
-            max_total_chars=12_000,
-            max_chunk_chars=2_000,
+        #if self._mode == "local":
+        recovery = StructuredRecoveryPolicy(
+            max_attempts=3,
+            bad_markers=["commentary to=", "<|", "functions.", "}]**", "ListToolsRequest"],
         )
 
+        try:
+            resp = await agent.ainvoke(
+                {"messages": [HumanMessage(input)]},
+                config={"recursion_limit": self._max_iterations},
+            )
+
+        except GraphRecursionError:
+            logger.warning(
+                "Recursion limit of %d reached. Forcing a direct response without tools.",
+                self._max_iterations,
+            )
+            forced_input = (
+                input
+                + "\n\n**IMPORTANT**: You have exhausted your allowed tool calls. "
+                "Based on all the research you have already done, provide your "
+                "final answer NOW without calling any more tools."
+            )
+            fallback_agent = create_agent(
+                model=model,
+                tools=[],
+                response_format=response_format,
+                system_prompt=self._system_prompt,
+            )
+            resp = await fallback_agent.ainvoke(
+                {"messages": [HumanMessage(forced_input)]},
+                config={"recursion_limit": self._max_iterations},
+            )
+
+        except Exception as e:
+            if response_schema:
+                logger.warning(f"Agent failed: {e}. Trying direct structured output...")
+                print("###############")
+                print(e.with_traceback)
+                print("###############")
+                try:
+                    return structured_output(
+                        llm=model,
+                        schema=response_schema,
+                        task_prompt=input,
+                        policy=recovery,
+                    )
+                except Exception as repair_error:
+                    logger.error(f"Repair also failed: {repair_error}")
+                    raise
+            raise
+
+        usage = TokenUsageOpenAi(resp, self._model)
+        tracker.add(usage)
+        logger.info(usage)
+
+        if response_schema:
             try:
-                resp = await agent.ainvoke(
-                    {"messages": [HumanMessage(input)]},
-                    config={"recursion_limit": self._max_iterations},
-                )
-            except GraphRecursionError:
-                logger.warning(
-                    "Recursion limit of %d reached. Forcing a direct response without tools.",
-                    self._max_iterations,
-                )
-                forced_input = (
-                    input
-                    + "\n\n**IMPORTANT**: You have exhausted your allowed tool calls. "
-                    "Based on all the research you have already done, provide your "
-                    "final answer NOW without calling any more tools."
-                )
-                fallback_agent = create_agent(
-                    model=model,
-                    tools=[],
-                    response_format=response_format,
-                    system_prompt=self._system_prompt,
-                )
-                resp = await fallback_agent.ainvoke(
-                    {"messages": [HumanMessage(forced_input)]},
-                    config={"recursion_limit": self._max_iterations},
+                structured_resp: RT = resp["structured_response"]
+                if structured_resp is None:
+                    raise RuntimeError("Structured response is None.")
+                return structured_resp
+            except (KeyError, StructuredOutputValidationError, RuntimeError) as e:
+                logger.warning(f"Structured response failed: {e}. Attempting repair...")
+
+                repaired = ensure_structured_agent_response(
+                    agent_response=resp,
+                    schema=response_schema,
+                    llm=model,
+                    original_prompt=input,
+                    policy=recovery,
                 )
 
+                if repaired is None:
+                    raise RuntimeError("Structured response repair returned None.")
 
-                usage = TokenUsageOpenAi(resp, self._model)
-                tracker.add(usage)
-                logger.info(usage)
+                return repaired
 
-                if response_schema:
-                    try:
-                        structured_resp: RT = resp["structured_response"]
-                        return structured_resp
-                    except (KeyError, StructuredOutputValidationError) as e:
-                        logger.warning(f"Structured response failed: {e}. Attempting repair...")
+        messages = resp.get("messages")
+        if messages is None or len(messages) == 0:
+            raise RuntimeError("LLM did not return any message!")
 
-                        repaired = ensure_structured_agent_response(
-                            agent_response=resp,
-                            schema=response_schema,
-                            llm=model,
-                            original_prompt=input,
-                            policy=recovery,
-                        )
-                        return repaired
+        ai_messages = [msg for msg in reversed(messages) if isinstance(msg, AIMessage)]
+        if not ai_messages:
+            raise RuntimeError("No AIMessage found in response!")
 
-                if not messages:
-                    # if we got tool outputs but no final AI message, return partials
-                    if tool_buffer.chunks:
-                        return "\n\n".join(tool_buffer.chunks)
-                    raise RuntimeError("LLM did not return any message!")
+        return str(ai_messages[0].content)
 
-                if not ai_messages:
-                    if tool_buffer.chunks:
-                        return "\n\n".join(tool_buffer.chunks)
-                    raise RuntimeError("No AIMessage found in response!")
-
-                return str(ai_messages[0].content)
-
-            except GraphRecursionError:
-                logger.warning("Graph recursion limit hit — returning partial tool outputs.")
-                return truncate_text("\n\n".join(tool_buffer.chunks), 12_000)
-
-            except Exception as e:
-                if response_schema:
-                    logger.warning(f"Agent failed: {e}. Trying direct structured output...")
-                    try:
-                        return structured_output(
-                            llm=model,
-                            schema=response_schema,
-                            task_prompt=input,
-                            policy=recovery,
-                        )
-                    except Exception as repair_error:
-                        logger.error(f"Repair also failed: {repair_error}")
-                        raise
-                raise
 
 
 
