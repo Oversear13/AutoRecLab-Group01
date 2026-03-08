@@ -21,7 +21,7 @@ from treesearch.mcp.docs_search_server import VECTOR_STORE_NAMES
 from treesearch.utils.response import strip_markdown_fences
 from utils.log import _ROOT_LOGGER
 from utils.path import mkdir
-
+from config import get_config
 logger = _ROOT_LOGGER.getChild("nodeAgent")
 
 class MinimalAgent:
@@ -283,29 +283,101 @@ class MinimalAgent:
             requirements=[Requirement(r) for r in self.code_requirements],
         )
     async def plan_and_code_query(self, prompt, retries=3) -> tuple[str, str]:
-        """Generate a natural language plan + code in the same LLM call and split them apart."""
-        plan_and_code_result = (
-            await Query(max_iterations=40)
-            .with_mcp(self._mcp_docs)
-            .with_system(
-                f"You are a Senior Recommender Systems Engineer specializing in the OmniRec library. "
-                f"Available documentation (OmniRec and libraries that OmniRec can use): {VECTOR_STORE_NAMES}. If using documentation_query make sure to not ad any whitespaces or characters to the vector store names.\n"
-                "Decide you need too Use the tool `documentation_query` to retrieve authoritative documentation excerpts ""\n"
-                "CRITICAL: You MUST use OmniRec for all recommender system functionality. Do NOT fall back to raw Lenskit, RecBole, or any other backend library directly. If you cannot find the right OmniRec API, search the documentation further — do not bypass OmniRec.\n"
-                "\n"
-                "Search documentation to verify API details. Process:\n"
-                "1. Identify needed components → 2. Search + verify each → 3. Document findings → 4. Implement\n"
-                "\n"
-                "Verify in documentation:\n"
-                "- Function signatures (parameter names, types, valid ranges)\n"
-                "- Object attributes (use public APIs only, not _private)\n"
-                "- Data structures and return types\n"
-                "\n"
-                "In 'nl_text', include '## Documentation Verified' section listing all verified methods.\n"
-                "Search for examples and Verify critical details in documentation."
+        """
+        Local LLMs:
+            Use a 2-phase flow:
+            1) bounded MCP/RAG retrieval only
+            2) structured PlanAndCode generation without tools
+
+        API LLMs:
+            Use the newer 1-phase structured PlanAndCode flow with MCP available.
+        """
+        config = get_config()
+
+        if config.local_llm.llm_mode == "local":
+            # --- 1) Tool/RAG phase: bounded recursion, retrieval only ---
+            rag_prompt = {
+                "Instruction": (
+                    "Decide whether you need to use the tool `documentation_query` to retrieve "
+                    "authoritative documentation excerpts needed to implement the user’s request.\n\n"
+                    "Output requirements:\n"
+                    "- Return ONLY the retrieved excerpts and their sources.\n"
+                    "- Do NOT write code, plans, or analysis.\n"
+                    "- Do NOT infer or invent APIs; rely strictly on retrieved documentation.\n"
+                    f"- Available documentation vector stores: {VECTOR_STORE_NAMES}\n"
+                    "- If using documentation_query, do not add whitespace or extra characters to vector store names."
+                ),
+                "Task": self.task_desc,
+                "Context": prompt,
+            }
+
+            retrieved_docs_text = await (
+                Query(max_iterations=12)
+                .with_mcp(self._mcp_docs)
+                .with_system(
+                    "You can call documentation_query.\n"
+                    "You may call tools AT MOST 7 TIMES total.\n"
+                    "If you have enough information, STOP calling tools and return the excerpts + sources.\n"
+                    "If a tool call fails repeatedly, stop and return partial results.\n"
+                    "Treat tool calls as expensive and finite.\n"
+                    "Do NOT write code."
+                )
+                .run(rag_prompt)
             )
-            .run(prompt, PlanAndCode)
-        )
+
+            prompt_with_docs = dict(prompt) if isinstance(prompt, dict) else {"Task": prompt}
+            prompt_with_docs["Retrieved Docs (authoritative)"] = retrieved_docs_text
+
+            # --- 2) Structured generation phase: no tools, must produce PlanAndCode ---
+            plan_and_code_result = await (
+                Query(max_iterations=4)
+                .with_system(
+                    "You are a Senior Recommender Systems Engineer specializing in the OmniRec library.\n"
+                    f"Available documentation source names: {VECTOR_STORE_NAMES}\n"
+                    "You work in a strict doc-driven environment.\n"
+                    "You MUST use OmniRec for all recommender system functionality.\n"
+                    "Do NOT fall back to raw LensKit, RecBole, or any other backend library directly.\n"
+                    "You are NOT allowed to call any tools in this phase.\n"
+                    "Use ONLY the provided 'Retrieved Docs (authoritative)'.\n"
+                    "If a required signature or detail is missing, make the most conservative assumption "
+                    "and clearly note it in nl_text.\n"
+                    "In 'nl_text', include a section titled '## Documentation Verified' listing the "
+                    "verified methods/classes actually supported by the retrieved docs.\n"
+                    "Return a complete PlanAndCode response."
+                )
+                .run(prompt_with_docs, PlanAndCode)
+            )
+
+        else:
+            # --- API model path: newer 1-phase structured generation with MCP available ---
+            plan_and_code_result = await (
+                Query(max_iterations=40)
+                .with_mcp(self._mcp_docs)
+                .with_system(
+                    f"You are a Senior Recommender Systems Engineer specializing in the OmniRec library. "
+                    f"Available documentation (OmniRec and libraries that OmniRec can use): {VECTOR_STORE_NAMES}. "
+                    "If using documentation_query, do not add whitespace or extra characters to the vector store names.\n"
+                    "Decide whether you need to use the tool to retrieve authoritative documentation excerpts.\n"
+                    "CRITICAL: You MUST use OmniRec for all recommender system functionality. "
+                    "Do NOT fall back to raw LensKit, RecBole, or any other backend library directly. "
+                    "If you cannot find the right OmniRec API, search the documentation further — do not bypass OmniRec.\n"
+                    "\n"
+                    "Search documentation to verify API details. Process:\n"
+                    "1. Identify needed components\n"
+                    "2. Search and verify each\n"
+                    "3. Document findings\n"
+                    "4. Implement\n"
+                    "\n"
+                    "Verify in documentation:\n"
+                    "- Function signatures (parameter names, types, valid ranges)\n"
+                    "- Object attributes (use public APIs only, not private ones)\n"
+                    "- Data structures and return types\n"
+                    "\n"
+                    "In 'nl_text', include a section titled '## Documentation Verified' listing all verified methods.\n"
+                    "Search for examples and verify critical details in documentation."
+                )
+                .run(prompt, PlanAndCode)
+            )
 
         nl_text = plan_and_code_result.nl_text
         code = strip_markdown_fences(plan_and_code_result.code)

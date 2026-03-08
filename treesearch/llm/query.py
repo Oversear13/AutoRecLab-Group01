@@ -160,24 +160,9 @@ class Query:
                 {"messages": [HumanMessage(forced_input)]},
                 config={"recursion_limit": self._max_iterations},
             )
-
         except Exception as e:
-            if response_schema:
-                logger.warning(f"Agent failed: {e}. Trying direct structured output...")
-                print("###############")
-                print(e.with_traceback)
-                print("###############")
-                try:
-                    return structured_output(
-                        llm=model,
-                        schema=response_schema,
-                        task_prompt=input,
-                        policy=recovery,
-                    )
-                except Exception as repair_error:
-                    logger.error(f"Repair also failed: {repair_error}")
-                    raise
-            raise
+                logger.exception("Agent execution failed before producing a response.")
+                raise
 
         usage = TokenUsageOpenAi(resp, self._model)
         tracker.add(usage)
