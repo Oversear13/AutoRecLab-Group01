@@ -25,51 +25,11 @@ class SelectDatasets:
     
     selected_datasets: list[str] # A List of dataset identifiers selected for the research task.
 
-vlm_feedback_spec = FunctionSpec(
-    name="analyze_experiment_plots",
-    json_schema={
-        "type": "object",
-        "properties": {
-            "plot_analyses": {
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "properties": {
-                        "analysis": {
-                            "type": "string",
-                            "description": "Detailed analysis of the plot's results and implications",
-                        },
-                    },
-                    "required": ["analysis"],
-                },
-            },
-            "valid_plots_received": {
-                "type": "boolean",
-                "description": "True if valid plots were received, False otherwise. For example, if the plots are empty or not meaningful, this should be False.",
-            },
-            "vlm_feedback_summary": {
-                "type": "string",
-                "description": "Summarize the feedback from the VLM. If the task involves generative modeling, make sure to focus on the generated samples.",
-            },
-        },
-        "required": ["plot_analyses", "valid_plots_received", "vlm_feedback_summary"],
-    },
-    description="Analyze experimental plots and provide detailed feedback on the results.",
-)
 @dataclass
 class PlotAnalyses:
     """ Detailed analysis of the plot's results and implications """
     analysis: str # Detailed analysis of the plot's results and implications
     
-@dataclass
-class VLMFeedback:
-    """ Analyze experimental plots and provide detailed feedback on the results. """
-    plot_analyses : list[PlotAnalyses] # Detailed analysis of the plot's results and implications
-    valid_plots_received : bool # True if valid plots were received, False otherwise. For example, if the plots are empty or not meaningful, this should be False.
-    vlm_feedback_summary : str # Summarize the feedback from the VLM. If the task involves generative modeling, make sure to focus on the generated samples.
-
-
-
 review_func_spec = FunctionSpec(
     name="submit_review",
     json_schema={
