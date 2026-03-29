@@ -1975,7 +1975,7 @@ wheels = [
 [[package]]
 name = "omnirec"
 version = "0.2.0"
-source = { git = "https://github.com/ISG-Siegen/OmniRec.git?rev=develop#a29c68d1c79032e7893d7f25ea784421e9a66c97" }
+source = { git = "https://github.com/ISG-Siegen/OmniRec.git?rev=develop#3b15480a8f3d51ea195b06b3be5432009db982f5" }
 dependencies = [
     { name = "cryptography" },
     { name = "dacite" },
@@ -1995,7 +1995,7 @@ dependencies = [
 [[package]]
 name = "omnirec-runner"
 version = "0.1.1"
-source = { git = "https://github.com/ISG-Siegen/OmniRec.git?subdirectory=packages%2Fomnirec_runner&rev=develop#a29c68d1c79032e7893d7f25ea784421e9a66c97" }
+source = { git = "https://github.com/ISG-Siegen/OmniRec.git?subdirectory=packages%2Fomnirec_runner&rev=develop#3b15480a8f3d51ea195b06b3be5432009db982f5" }
 dependencies = [
     { name = "rpyc" },
 ]

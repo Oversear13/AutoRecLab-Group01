@@ -12,15 +12,15 @@ enable_type_checking = true
 max_type_check_attempts = 3
 
 [agent]
-k_fold_validation = 1
+k_fold_validation =1
 
 [agent.code]
-model = "gpt-5.2"
+model = "gpt-5-mini"
 model_temp = 1.0
 
 [local_llm]
 llm_mode = "local" #local or api
 embedding_mode = "local" #local or api
 base_url = "http://host.docker.internal:1234/v1"
-local_model = "qwen/qwen3-coder-30b"
+local_model = "qwen/qwen3.5-35b-a3b"
 local_embedding_model = "text-embedding-embeddinggemma-300m-qat"
