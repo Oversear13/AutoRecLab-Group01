@@ -1,6 +1,220 @@
 > [!CAUTION]
-> This is the active development branch (Work in Progress). 
+> This is the active **development branch** (`develop`) of AutoRecLab v2.
 >
-> For the latest release (v1), check out the [`main`](../../tree/main) branch.
+> - Features can change at any time.
+> - Interfaces and prompts may be unstable.
+> - Experimental behavior is expected.
+>
+> For the latest stable release (v1), use the [`main`](../../tree/main) branch.
 
-# AutoRecLab v2: Towards an Autonomous Recommender-Systems Researcher
+# AutoRecLab v2 (Develop): Towards an Autonomous Recommender-Systems Researcher
+
+AutoRecLab is an autonomous research agent for recommender-systems experimentation.
+It turns a natural-language research task into executable code, evaluates intermediate results, and improves solutions iteratively via tree search.
+
+This `develop` branch is where new features are integrated continuously between paper releases.
+
+## Why this branch exists
+
+Your project follows a publication-driven release process:
+
+- `develop`: active development, frequent changes, newest features
+- `main`: stable snapshot that is updated when a new releases are considered
+
+If you need reproducible, publication-stable behavior, use `main`.
+If you want the newest capabilities, use `develop`.
+
+## Current v2 focus (develop)
+
+- Autonomous iterative code improvement with tree search
+- Requirement engineering from free-form research prompts
+- Built-in execution, scoring, and debugging loops
+- RAG-assisted documentation lookup (OmniRec, LensKit, RecBole) via FAISS indices
+- Configurable model/runtime behavior via `config.toml` and environment variables
+- Python type checking before code execution to improve a reliable execution of the generated code
+
+## Requirements
+
+- Python >= 3.12
+- One of:
+  - uv (https://docs.astral.sh/uv/) (recommended)
+  - Docker + Docker Compose
+  - pip (works, but uv is preferred in this project)
+- Graphviz (`dot`) available on `PATH` (required by runtime checks)
+- OpenAI API key (needed for LLM calls and embedding generation)
+
+## Quick start
+
+### Option A: Docker (recommended for isolated runs)
+
+1. Create `.env` in the repository root:
+
+	```env
+	OPENAI_API_KEY=your-key-here
+	```
+
+2. Run the sandbox container:
+
+	```bash
+	docker compose run --build sandbox
+	```
+
+Notes:
+- The container entrypoint generates/updates documentation embeddings on startup.
+- Outputs are written to `./sandbox` on the host (mounted to `/app/out` in the container).
+
+### Option B: Local with uv
+
+1. Install dependencies:
+
+	```bash
+	uv sync
+	```
+
+2. Create `.env` (same as above) or export your API key in the shell.
+
+3. (Recommended once) Generate documentation embeddings locally:
+
+	```bash
+	uv run python -m cli.embeddings.main generate --all
+	```
+
+4. Start AutoRecLab:
+
+	```bash
+	uv run main.py
+	```
+
+### Option C: Local with pip
+
+```bash
+pip install -e .
+python main.py
+```
+
+## Running the agent
+
+After start, enter a multi-line research task and finish with `!start`:
+
+```text
+Enter you request, write "!start" to start:
+> Build a reproducible top-N recommendation experiment on MovieLens.
+> Compare two candidate algorithms and report NDCG@10, Recall@10.
+> !start
+```
+
+At runtime, AutoRecLab will:
+1. derive concrete code requirements,
+2. generate multiple candidate implementations,
+3. execute and evaluate them,
+4. debug/improve candidates iteratively,
+5. stop when iteration budget/satisfaction criteria are reached.
+
+## Embeddings / documentation index
+
+AutoRecLab uses FAISS vector stores in `ragEmbeddings/` for docs-aware coding.
+
+Generate/update manually:
+
+```bash
+uv run python -m cli.embeddings.main generate --all
+```
+
+Useful flags:
+- `--omnirec`, `--lenskit`, `--recbole` (select subset)
+- `-f` / `--force` (overwrite existing index)
+- `-o` (custom output directory)
+
+## Configuration
+
+Main config file: `config.toml`
+
+Example (current defaults in this branch):
+
+```toml
+out_dir = "./out"
+
+[treesearch]
+num_draft_nodes = 3
+debug_prob = 0.3
+epsilon = 0.4
+max_iterations = 5
+
+[exec]
+timeout = 5400
+enable_type_checking = true
+max_type_check_attempts = 3
+
+[agent]
+k_fold_validation = 1
+
+[agent.code]
+model = "gpt-5-mini"
+model_temp = 1.0
+```
+
+Environment override pattern:
+- Prefix: `ARL_`
+- Nested fields via `__`
+
+Examples:
+- `ARL_out_dir=./sandbox`
+- `ARL_treesearch__max_iterations=8`
+- `ARL_agent__code__model=gpt-5-mini`
+
+Logging level can be set via:
+- `ISGSA_LOG=DEBUG|INFO|WARNING|ERROR`
+
+## Outputs
+
+Depending on your `out_dir`, AutoRecLab writes artifacts such as:
+
+- `code_requirements.json` (engineered requirements)
+- `save.pkl` (tree state)
+- intermediate generated code/checkpoints/plots/metadata
+- execution logs (if you use shell redirection or helper scripts)
+
+Utility for visualizing saved tree state:
+
+```bash
+uv run viz.py -i ./out/save.pkl -o ./out/tree_render
+```
+
+## Development workflow
+
+Install development dependencies via `uv sync`, then run tests:
+
+```bash
+uv run pytest
+```
+
+Project includes:
+- unit tests under `tests/`
+- tree search core under `treesearch/`
+- embedding CLI under `cli/embeddings/`
+- utility package workspace member under `packages/dataloader/`
+
+## Repository structure (high level)
+
+```text
+.
+├── main.py                    # Entry point
+├── config.toml                # Runtime config
+├── compose.yaml               # Docker sandbox service
+├── cli/embeddings/            # Embedding index tooling
+├── treesearch/                # Core agent/search/execution logic
+├── ragEmbeddings/             # FAISS indices for docs retrieval
+├── sandbox/                   # Sandbox outputs/workspace
+├── tests/                     # Tests
+└── viz.py                     # Tree rendering utility
+```
+
+## Known develop-branch caveats
+
+- Behavior and prompt contracts can change without notice.
+- Some experimental backend/model combinations may be incomplete.
+
+---
+
+If you need stable, citable behavior for publication artifacts, use [`main`](../../tree/main).
+For active feature development and newest research tooling, stay on `develop`.
