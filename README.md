@@ -101,7 +101,7 @@ workspace = "./workspace"
 k_fold_validation = 1    # Preferred number of folds for validation (1 = no CV)
 
 [agent.code]
-model = "gpt-5-mini"     # LLM model to use
+model = "gpt-5-nano"     # LLM model to use
 model_temp = 1.0         # Temperature for code generation
 ```
 
