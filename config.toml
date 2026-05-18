@@ -16,5 +16,10 @@ keep_only_relevant_files = false
 k_fold_validation = 1
 
 [agent.code]
+<<<<<<< HEAD
 model = "gpt-5-mini"
 model_temp = 1.0
+=======
+model = "gpt-5-nano"
+model_temp = 1.0
+>>>>>>> master

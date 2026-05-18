@@ -1,3 +1,9 @@
+> [!IMPORTANT]
+> **Looking for the latest features?** This branch contains the current stable release aka. **AutoRecLab v1**. 
+> For active development and upcoming changes, please switch to the [`develop`](../../tree/develop) branch.
+
+
+# AutoRecLab v1: Towards an Autonomous Recommender-Systems Researcher
 > [!CAUTION]
 > This is the active **development branch** (`develop`) of AutoRecLab v2.
 >
