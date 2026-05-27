@@ -193,16 +193,34 @@ class TreeSearch:
         # Move all generated files from the workspace to checkpoint for this node
         workspace_dir = Path(self._workspace)
         working_dir = workspace_dir / "working"
-        
+        """ 
+        Old: Leads to issues where agent generates files, then in next iteration tries to read from workspace 
+        but files are gone since we moved them to checkpoint. We want to keep files in workspace until the end of the iteration, 
+        then move them all at once at the end of exec_node.
+
         # Collect files from workspace (excluding runfile.py and working dir)
-        generated_files = [
+        /*generated_files = [
             item for item in workspace_dir.iterdir()
             if item.name not in ("runfile.py", "working") and not item.name.startswith(".")
         ]
+        """
+        # PR Group 01: Definierte Dateiformate, die nicht gemoved werden sollen.
+        ignored_extensions = (".csv", ".data", ".tsv", ".zip", ".gz")
+
+        # 1. Dateien aus dem Haupt-Workspace sammeln (gefiltert)
+        generated_files = [
+            item for item in workspace_dir.iterdir()
+            if item.name not in ("runfile.py", "working") 
+            and not item.name.startswith(".")
+            and item.suffix.lower() not in ignored_extensions
+        ]
         
-        # Also collect files from working subdirectory if it exists
+        # 2. Dateien aus dem working-Unterordner sammeln 
         if working_dir.exists():
-            generated_files.extend(list(working_dir.iterdir()))
+            generated_files.extend([
+                item for item in working_dir.iterdir()
+                if item.suffix.lower() not in ignored_extensions
+            ])
 
         # Keep only relevant files via whitelist
         if self._config.exec.keep_only_relevant_files:
@@ -220,11 +238,10 @@ class TreeSearch:
                         os.remove(str(item))
 
             generated_files = keep
-
         else:
             logger.info("Keeping all files.")
         
-        
+        # Das eigentliche Verschieben in den Checkpoint
         if generated_files:
             generated_dir = mkdir(node_dir / "generated")
             for item in generated_files:
