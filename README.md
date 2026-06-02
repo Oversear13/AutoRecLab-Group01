@@ -145,6 +145,44 @@ At runtime, AutoRecLab will:
 4. debug/improve candidates iteratively,
 5. stop when iteration budget/satisfaction criteria are reached.
 
+
+## CLI Usage
+
+**Inline prompt:**
+```bash
+uv run main.py --prompt "Analyze the signal and generate a report"
+```
+
+**Load prompt from an file:**
+```bash
+uv run main.py --prompt-file ./my-prompt.txt
+```
+
+**Don't log entered prompt in /entered_prompt.txt:**
+```bash
+uv run main.py --prompt-no-log
+```
+
+**Initialize workspace:**
+```bash
+uv run main.py --init
+```
+
+**List all available datasets:**
+```bash
+uv run main.py --list-datasets
+```
+
+**List all available models:**
+```bash
+uv run main.py --list-models
+```
+
+**Set model:**
+```bash
+uv run main.py --model "gpt-4o"
+```
+
 ## Embeddings / documentation index
 
 AutoRecLab uses FAISS vector stores in `ragEmbeddings/` for docs-aware coding.
