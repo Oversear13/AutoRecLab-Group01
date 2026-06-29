@@ -1,0 +1,55 @@
+[2026/06/29 09:07:29] INFO     Canonicalized data set already exists, skipping download and canonicalization.                                    recsys_data_set.py:205
+                      INFO     Making data set implicit with threshold 3.                                                                     feedback_conversion.py:21
+                      INFO     Minimum rating: 1                                                                                              feedback_conversion.py:24
+                      INFO     Maximum rating: 5                                                                                              feedback_conversion.py:25
+                      INFO     Number of interactions before: 100000                                                                          feedback_conversion.py:26
+                      INFO     Number of interactions after: 82520                                                                            feedback_conversion.py:44
+                      INFO     Pruning data set to 5-core.                                                                                           core_pruning.py:19
+                      INFO     Number of interactions before: 82520                                                                                  core_pruning.py:20
+                      INFO     Number of interactions after: 81697                                                                                   core_pruning.py:63
+Dataset after preprocessing:
+RecSysDataSet(name='MovieLens100K', variant='RawData', interactions=81697, columns=3, lineage_steps=2)
+RecSysDataSet: MovieLens100K
+  Variant: RawData
+  Interactions: 81697
+  Columns: 3
+  Metadata:
+    Name: MovieLens100K
+    Canonical path: /root/.omnirec/data/canon/MovieLens100K.csv
+    Raw dir: unknown
+  Lineage steps: 2
+  Lineage:
+    1. MakeImplicit(threshold=3) [runtime=0.0104s]
+    2. CorePruning(core=5) [runtime=0.0593s]
+Running seed=11, global_random_state=11
+                      INFO     Creating env 'LensKit_env' at /root/.omnirec/data/envs/LensKit_env                                                            envs.py:51
+                      CRITICAL Error while creating env 'LensKit_env'                                                                                        envs.py:89
+                      INFO     Stopping runner...                                                                                                    coordinator.py:445
+Traceback (most recent call last):
+  File "/app/.venv/lib/python3.12/site-packages/omnirec/runner/coordinator.py", line 133, in run
+    host, port = self.start_runner(current_algo)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/.venv/lib/python3.12/site-packages/omnirec/runner/coordinator.py", line 263, in start_runner
+    env.create()
+  File "/app/.venv/lib/python3.12/site-packages/omnirec/runner/envs.py", line 55, in create
+    self._handle_proc(proc)
+  File "/app/.venv/lib/python3.12/site-packages/omnirec/runner/envs.py", line 90, in _handle_proc
+    sys.exit(1)
+SystemExit: 1
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/app/out/workspace/runfile.py", line 130, in <module>
+    main()
+  File "/app/out/workspace/runfile.py", line 93, in main
+    run_omnirec(datasets=split_dataset, plan=plan, evaluator=evaluator)
+  File "/app/.venv/lib/python3.12/site-packages/omnirec/util/run.py", line 35, in run_omnirec
+    c.run(datasets, plan, evaluator)
+  File "/app/.venv/lib/python3.12/site-packages/omnirec/runner/coordinator.py", line 235, in run
+    self.stop(logger.info)
+  File "/app/.venv/lib/python3.12/site-packages/omnirec/runner/coordinator.py", line 451, in stop
+    self._proc.terminate()
+    ^^^^^^^^^^
+AttributeError: 'Coordinator' object has no attribute '_proc'
+Program crashed with exception (see above) after a second!

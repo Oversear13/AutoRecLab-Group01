@@ -1,0 +1,33 @@
+[2026/06/29 09:02:26] INFO     Trying to download MovieLens100K from https://files.grouplens.org/datasets/movielens/ml-100k.zip...                      registry.py:138
+
+  0%|          | 0.00/4.92M [00:00<?, ?B/s]
+ 21%|██▏       | 1.05M/4.92M [00:03<00:11, 348kB/s]
+ 43%|████▎     | 2.10M/4.92M [00:05<00:07, 369kB/s]
+ 64%|██████▍   | 3.15M/4.92M [00:07<00:04, 425kB/s]
+ 85%|████████▌ | 4.19M/4.92M [00:09<00:01, 501kB/s]
+100%|██████████| 4.92M/4.92M [00:09<00:00, 586kB/s]
+100%|██████████| 4.92M/4.92M [00:09<00:00, 493kB/s]
+[2026/06/29 09:02:37] INFO     Verifying checksum...                                                                                                         util.py:73
+                      INFO     Checksum verified successfully!                                                                                               util.py:76
+                      INFO     Loading MovieLens100K...                                                                                                 registry.py:185
+                      INFO     Successfully loaded MovieLens100K!                                                                                       registry.py:188
+                      INFO     Canonicalizing raw data...                                                                                        recsys_data_set.py:232
+                      INFO     Dropping duplicate interactions...                                                                                recsys_data_set.py:252
+                      INFO     Number of interactions before: 100000                                                                             recsys_data_set.py:253
+                      INFO     Number of interactions after: 100000                                                                              recsys_data_set.py:257
+                      INFO     Normalizing identifiers...                                                                                        recsys_data_set.py:264
+                      INFO     Done.                                                                                                             recsys_data_set.py:270
+                      INFO     Normalizing timestamps...                                                                                         recsys_data_set.py:278
+                      INFO     Done.                                                                                                             recsys_data_set.py:293
+                      INFO     Canonicalized raw data in 0.0313s.                                                                                recsys_data_set.py:243
+                      INFO     Saving to /root/.omnirec/data/canon/MovieLens100K.csv...                                                          recsys_data_set.py:244
+Traceback (most recent call last):
+  File "/app/out/workspace/runfile.py", line 161, in <module>
+    main()
+  File "/app/out/workspace/runfile.py", line 105, in main
+    raw_df = get_raw_dataframe(dataset)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/out/workspace/runfile.py", line 54, in get_raw_dataframe
+    raise AttributeError('Could not locate raw dataframe on RecSysDataSet; please inspect public dataset accessors.')
+AttributeError: Could not locate raw dataframe on RecSysDataSet; please inspect public dataset accessors.
+Program crashed with exception (see above) after 14 seconds!

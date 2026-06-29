@@ -1,0 +1,29 @@
+{
+  "dataset": "MovieLens100K",
+  "implicit_threshold": 3,
+  "core": 5,
+  "seeds": [
+    11,
+    22,
+    33,
+    44,
+    55
+  ],
+  "split_proportions": {
+    "train": 0.7,
+    "validation": 0.15,
+    "test": 0.15
+  },
+  "algorithms": [
+    "LensKit.ImplicitMFScorer",
+    "LensKit.ItemKNNScorer",
+    "LensKit.PopScorer"
+  ],
+  "metrics": [
+    "NDCG@10",
+    "HR@10",
+    "Recall@10"
+  ],
+  "results_path": "/app/out/workspace/working/split_seed_results.csv",
+  "aggregate_path": "/app/out/workspace/working/split_seed_aggregate.csv"
+}

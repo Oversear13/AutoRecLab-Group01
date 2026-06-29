@@ -1,0 +1,55 @@
+[2026/06/29 09:06:23] INFO     Canonicalized data set already exists, skipping download and canonicalization.                                    recsys_data_set.py:205
+                      INFO     Making data set implicit with threshold 3.                                                                     feedback_conversion.py:21
+                      INFO     Minimum rating: 1                                                                                              feedback_conversion.py:24
+                      INFO     Maximum rating: 5                                                                                              feedback_conversion.py:25
+                      INFO     Number of interactions before: 100000                                                                          feedback_conversion.py:26
+                      INFO     Number of interactions after: 82520                                                                            feedback_conversion.py:44
+                      INFO     Pruning data set to 5-core.                                                                                           core_pruning.py:19
+                      INFO     Number of interactions before: 82520                                                                                  core_pruning.py:20
+                      INFO     Number of interactions after: 81697                                                                                   core_pruning.py:63
+Dataset after preprocessing:
+RecSysDataSet(name='MovieLens100K', variant='RawData', interactions=81697, columns=3, lineage_steps=2)
+RecSysDataSet: MovieLens100K
+  Variant: RawData
+  Interactions: 81697
+  Columns: 3
+  Metadata:
+    Name: MovieLens100K
+    Canonical path: /root/.omnirec/data/canon/MovieLens100K.csv
+    Raw dir: unknown
+  Lineage steps: 2
+  Lineage:
+    1. MakeImplicit(threshold=3) [runtime=0.0129s]
+    2. CorePruning(core=5) [runtime=0.0872s]
+Running seed=11, global_random_state=11
+[2026/06/29 09:06:24] INFO     Creating env 'LensKit_env' at /root/.omnirec/data/envs/LensKit_env                                                            envs.py:51
+                      CRITICAL Error while creating env 'LensKit_env'                                                                                        envs.py:89
+                      INFO     Stopping runner...                                                                                                    coordinator.py:445
+Seed 11 failed: AttributeError("'Coordinator' object has no attribute '_proc'")
+Running seed=22, global_random_state=22
+[2026/06/29 09:06:25] INFO     Creating env 'LensKit_env' at /root/.omnirec/data/envs/LensKit_env                                                            envs.py:51
+                      CRITICAL Error while creating env 'LensKit_env'                                                                                        envs.py:89
+                      INFO     Stopping runner...                                                                                                    coordinator.py:445
+Seed 22 failed: AttributeError("'Coordinator' object has no attribute '_proc'")
+Running seed=33, global_random_state=33
+[2026/06/29 09:06:26] INFO     Creating env 'LensKit_env' at /root/.omnirec/data/envs/LensKit_env                                                            envs.py:51
+                      CRITICAL Error while creating env 'LensKit_env'                                                                                        envs.py:89
+                      INFO     Stopping runner...                                                                                                    coordinator.py:445
+Seed 33 failed: AttributeError("'Coordinator' object has no attribute '_proc'")
+Running seed=44, global_random_state=44
+[2026/06/29 09:06:27] INFO     Creating env 'LensKit_env' at /root/.omnirec/data/envs/LensKit_env                                                            envs.py:51
+                      CRITICAL Error while creating env 'LensKit_env'                                                                                        envs.py:89
+                      INFO     Stopping runner...                                                                                                    coordinator.py:445
+Seed 44 failed: AttributeError("'Coordinator' object has no attribute '_proc'")
+Running seed=55, global_random_state=55
+[2026/06/29 09:06:29] INFO     Creating env 'LensKit_env' at /root/.omnirec/data/envs/LensKit_env                                                            envs.py:51
+                      CRITICAL Error while creating env 'LensKit_env'                                                                                        envs.py:89
+                      INFO     Stopping runner...                                                                                                    coordinator.py:445
+Seed 55 failed: AttributeError("'Coordinator' object has no attribute '_proc'")
+Per-seed results saved to: /app/out/workspace/working/split_seed_results.csv
+Aggregate results saved to: /app/out/workspace/working/split_seed_aggregate.csv
+Metadata saved to: /app/out/workspace/working/experiment_metadata.json
+Empty DataFrame
+Columns: []
+Index: []
+Execution time: 11 seconds (time limit is an hour).
