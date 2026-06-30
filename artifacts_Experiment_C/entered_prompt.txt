@@ -1,0 +1,3 @@
+I’d like to run an experiment to quantify how much data split random seeds affect recommender system accuracy. Test three algorithms: ALS,ItemKNN, and Pop. Run this on the following datasets with implicit feedback:
+MovieLens100K. 
+First, please convert any ratings greater than 3 to implicit interactions. Then preprocess the dataset with 5-core filtering. After that do the following as the main experimental procedure: Generate 5 different random seeds for data splitting. For each algorithm and seed, please do a split: train: 0.7 , test: 0.15, validation_size: 0.15. Train all models using standard hyperparameters. 
