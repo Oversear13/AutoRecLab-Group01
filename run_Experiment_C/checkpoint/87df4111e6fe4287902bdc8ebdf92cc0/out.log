@@ -1,0 +1,65 @@
+
+===== Running seed 7 =====
+[2026/06/03 12:08:23] INFO     Canonicalized data set already exists, skipping download and           recsys_data_set.py:205
+                               canonicalization.                                                                            
+Loaded dataset: RecSysDataSet(name='MovieLens100K', variant='RawData', interactions=100000, columns=4, lineage_steps=0)
+                      INFO     Making data set implicit with threshold 3.                          feedback_conversion.py:21
+                      INFO     Minimum rating: 1                                                   feedback_conversion.py:24
+                      INFO     Maximum rating: 5                                                   feedback_conversion.py:25
+                      INFO     Number of interactions before: 100000                               feedback_conversion.py:26
+                      INFO     Number of interactions after: 82520                                 feedback_conversion.py:44
+                      INFO     Pruning data set to 5-core.                                                core_pruning.py:19
+                      INFO     Number of interactions before: 82520                                       core_pruning.py:20
+                      INFO     Number of interactions after: 81697                                        core_pruning.py:63
+Split sizes for seed 7: train=56419, valid=12579, test=12699
+[2026/06/03 12:08:24] INFO     Reusing existing env 'LensKit_env' at /root/.omnirec/data/envs/LensKit_env         envs.py:48
+                      INFO     Starting runner...                                                         coordinator.py:272
+[2026/06/03 12:08:25] INFO     Runner started with pid: 4417                                              coordinator.py:297
+                      INFO     Connecting to runner...                                                    coordinator.py:135
+                      INFO     Running phase 'Fit' for MovieLens100K/ImplicitMFScorer                     coordinator.py:402
+[2026/06/03 12:08:35] INFO     Running phase 'Predict' for MovieLens100K/ImplicitMFScorer                 coordinator.py:402
+[2026/06/03 12:08:45] INFO     Running phase 'Evaluate' for MovieLens100K/ImplicitMFScorer                coordinator.py:402
+[2026/06/03 12:08:48] INFO     MovieLens100K/ImplicitMFScorer done!                                       coordinator.py:373
+                      INFO     Stopping runner...                                                         coordinator.py:445
+                      INFO     Reusing existing env 'LensKit_env' at /root/.omnirec/data/envs/LensKit_env         envs.py:48
+                      INFO     Starting runner...                                                         coordinator.py:272
+[2026/06/03 12:08:50] INFO     Runner started with pid: 4601                                              coordinator.py:297
+                      INFO     Connecting to runner...                                                    coordinator.py:135
+                      INFO     Running phase 'Fit' for MovieLens100K/ItemKNNScorer                        coordinator.py:402
+[2026/06/03 12:09:00] INFO     Running phase 'Predict' for MovieLens100K/ItemKNNScorer                    coordinator.py:402
+[2026/06/03 12:09:10] INFO     Running phase 'Evaluate' for MovieLens100K/ItemKNNScorer                   coordinator.py:402
+[2026/06/03 12:09:13] INFO     MovieLens100K/ItemKNNScorer done!                                          coordinator.py:373
+                      INFO     Stopping runner...                                                         coordinator.py:445
+                      INFO     Reusing existing env 'LensKit_env' at /root/.omnirec/data/envs/LensKit_env         envs.py:48
+                      INFO     Starting runner...                                                         coordinator.py:272
+[2026/06/03 12:09:15] INFO     Runner started with pid: 4786                                              coordinator.py:297
+                      INFO     Connecting to runner...                                                    coordinator.py:135
+                      INFO     Running phase 'Fit' for MovieLens100K/PopScorer                            coordinator.py:402
+[2026/06/03 12:09:25] INFO     Running phase 'Predict' for MovieLens100K/PopScorer                        coordinator.py:402
+[2026/06/03 12:09:35] INFO     Running phase 'Evaluate' for MovieLens100K/PopScorer                       coordinator.py:402
+[2026/06/03 12:09:38] INFO     MovieLens100K/PopScorer done!                                              coordinator.py:373
+                      INFO     Stopping runner...                                                         coordinator.py:445
+                               MovieLens100K-08d57673: Evaluation Results                               
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓
+┃ Algorithm                           ┃ HR@10              ┃ NDCG@10             ┃ Recall@10           ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩
+│ LensKit.ImplicitMFScorer-f0dd7ecb-7 │ 0.7613997879109226 │ 0.13748711596307914 │ 0.1945323940817043  │
+│ LensKit.ItemKNNScorer-c3d66610-7    │ 0.7879109225874867 │ 0.1807754740010039  │ 0.23315112188388945 │
+│ LensKit.PopScorer-f4aa5539-7        │ 0.647932131495228  │ 0.1225653741083829  │ 0.1520249457152954  │
+└─────────────────────────────────────┴────────────────────┴─────────────────────┴─────────────────────┘
+Traceback (most recent call last):
+  File "/app/out/workspace/runfile.py", line 136, in <module>
+    seed_results = run_single_seed(seed, working_dir)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/out/workspace/runfile.py", line 114, in run_single_seed
+    wide_df = wide_df[cols].sort_values('algorithm').reset_index(drop=True)
+              ~~~~~~~^^^^^^
+  File "/app/.venv/lib/python3.12/site-packages/pandas/core/frame.py", line 4119, in __getitem__
+    indexer = self.columns._get_indexer_strict(key, "columns")[1]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/.venv/lib/python3.12/site-packages/pandas/core/indexes/base.py", line 6212, in _get_indexer_strict
+    self._raise_if_missing(keyarr, indexer, axis_name)
+  File "/app/.venv/lib/python3.12/site-packages/pandas/core/indexes/base.py", line 6264, in _raise_if_missing
+    raise KeyError(f"{not_found} not in index")
+KeyError: "['NDCG@10', 'Recall@10', 'HR@10'] not in index"
+Program crashed with exception (see above) after a minute!

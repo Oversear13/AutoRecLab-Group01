@@ -1,0 +1,12 @@
+
+===== Running seed 7 =====
+[2026/06/03 12:31:03] INFO     Canonicalized data set already exists, skipping download and           recsys_data_set.py:205
+                               canonicalization.                                                                            
+Loaded dataset: RecSysDataSet(name='MovieLens100K', variant='RawData', interactions=100000, columns=4, lineage_steps=0)
+                      INFO     Making data set implicit with threshold 3.0000001.                  feedback_conversion.py:21
+                      INFO     Minimum rating: 1                                                   feedback_conversion.py:24
+                      INFO     Maximum rating: 5                                                   feedback_conversion.py:25
+                      INFO     Number of interactions before: 100000                               feedback_conversion.py:26
+                      CRITICAL Threshold must be an integer or a float between 0 and 1. Got <class feedback_conversion.py:38
+                               'float'> with value 3.0000001 instead.                                                       
+Program crashed with exception (see above) after a second!
