@@ -1,4 +1,0 @@
-algorithm,NDCG@10_mean,NDCG@10_std,NDCG@10_min,NDCG@10_max,Recall@10_mean,Recall@10_std,Recall@10_min,Recall@10_max,HR@10_mean,HR@10_std,HR@10_min,HR@10_max
-ImplicitMFScorer,,,,,,,,,,,,
-ItemKNNScorer,,,,,,,,,,,,
-PopScorer,,,,,,,,,,,,

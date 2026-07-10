@@ -1,5 +1,7 @@
 
 .venv
 .vscode
-
+artifacts_Experiment_A/
+artifacts_Experiment_B/
+artifacts_Experiment_C/
 ragEmbeddings/
