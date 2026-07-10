@@ -1,4 +1,6 @@
 > [!IMPORTANT]
+All important Artefacts for Group01 of the Machine Learning "Praktikum" are available via https://doi.org/10.5281/zenodo.21302065 .
+
 > **Looking for the latest features?** This branch contains the current stable release aka. **AutoRecLab v1**. 
 > For active development and upcoming changes, please switch to the [`develop`](../../tree/develop) branch.
 
