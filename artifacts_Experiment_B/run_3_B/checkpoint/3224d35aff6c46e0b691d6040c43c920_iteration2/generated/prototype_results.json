@@ -1,0 +1,33 @@
+{
+  "dataset": "MovieLens1M",
+  "results": [
+    {
+      "algorithm": "LensKit.ItemKNNScorer-dd803d4b-42",
+      "fold": null,
+      "name": "NDCG",
+      "k": 10,
+      "value": 0.1438322238046411
+    },
+    {
+      "algorithm": "LensKit.ItemKNNScorer-dd803d4b-42",
+      "fold": null,
+      "name": "Recall",
+      "k": 1,
+      "value": 0.19471836871134882
+    },
+    {
+      "algorithm": "LensKit.ImplicitMFScorer-27495fcd-42",
+      "fold": null,
+      "name": "NDCG",
+      "k": 10,
+      "value": 0.12596646525893324
+    },
+    {
+      "algorithm": "LensKit.ImplicitMFScorer-27495fcd-42",
+      "fold": null,
+      "name": "Recall",
+      "k": 1,
+      "value": 0.14882333443818363
+    }
+  ]
+}

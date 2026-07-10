@@ -1,0 +1,10 @@
+[2026/07/10 17:22:34] INFO     Canonicalized data set already exists, skipping download and       recsys_data_set.py:205
+                               canonicalization.                                                                        
+Traceback (most recent call last):
+  File "/app/out/workspace/runfile.py", line 91, in <module>
+    main()
+  File "/app/out/workspace/runfile.py", line 52, in main
+    'num_interactions': int(dataset.num_interactions()),
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: int() argument must be a string, a bytes-like object or a real number, not 'dict'
+Program crashed with exception (see above) after 2 seconds!

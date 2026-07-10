@@ -1,0 +1,68 @@
+[2026/07/10 17:14:57] INFO     Trying to download MovieLens100K from                                     registry.py:138
+                               https://files.grouplens.org/datasets/movielens/ml-100k.zip...                            
+
+  0%|          | 0.00/4.92M [00:00<?, ?B/s]
+ 21%|██▏       | 1.05M/4.92M [00:00<00:02, 1.50MB/s]
+ 43%|████▎     | 2.10M/4.92M [00:00<00:00, 2.93MB/s]
+ 85%|████████▌ | 4.19M/4.92M [00:01<00:00, 4.98MB/s]
+100%|██████████| 4.92M/4.92M [00:01<00:00, 4.41MB/s]
+[2026/07/10 17:14:59] INFO     Verifying checksum...                                                          util.py:73
+                      INFO     Checksum verified successfully!                                                util.py:76
+                      INFO     Loading MovieLens100K...                                                  registry.py:185
+                      INFO     Successfully loaded MovieLens100K!                                        registry.py:188
+                      INFO     Canonicalizing raw data...                                         recsys_data_set.py:232
+                      INFO     Dropping duplicate interactions...                                 recsys_data_set.py:252
+                      INFO     Number of interactions before: 100000                              recsys_data_set.py:253
+                      INFO     Number of interactions after: 100000                               recsys_data_set.py:257
+                      INFO     Normalizing identifiers...                                         recsys_data_set.py:264
+                      INFO     Done.                                                              recsys_data_set.py:270
+                      INFO     Normalizing timestamps...                                          recsys_data_set.py:278
+                      INFO     Done.                                                              recsys_data_set.py:293
+                      INFO     Canonicalized raw data in 0.0242s.                                 recsys_data_set.py:243
+                      INFO     Saving to /root/.omnirec/data/canon/MovieLens100K.csv...           recsys_data_set.py:244
+Loaded dataset: MovieLens100K
+Raw interactions: 100000
+                      INFO     Pruning data set to 5-core.                                            core_pruning.py:19
+                      INFO     Number of interactions before: 100000                                  core_pruning.py:20
+                      INFO     Number of interactions after: 99287                                    core_pruning.py:63
+Post-preprocessing stats: {'dataset': 'MovieLens100K', 'train_interactions': 68739, 'val_interactions': 15197, 'test_interactions': 15351, 'total_interactions': 99287}
+[2026/07/10 17:15:00] INFO     Server key file missing!                                                       cert.py:81
+                      INFO     Server certificate file missing!                                               cert.py:86
+                      INFO     Generating new Side.Server key and certificate...                              cert.py:47
+                      INFO     Client key file missing!                                                       cert.py:81
+                      INFO     Client certificate file missing!                                               cert.py:86
+                      INFO     Generating new Side.Client key and certificate...                              cert.py:47
+                      INFO     Creating env 'LensKit_env' at /root/.omnirec/data/envs/LensKit_env             envs.py:51
+[2026/07/10 17:15:03] INFO     Installing packages...                                                         envs.py:57
+[2026/07/10 17:18:50] INFO     Done.                                                                          envs.py:63
+                      INFO     Starting runner...                                                     coordinator.py:272
+[2026/07/10 17:18:55] INFO     Runner started with pid: 1019                                          coordinator.py:297
+                      INFO     Connecting to runner...                                                coordinator.py:135
+                      INFO     Running phase 'Fit' for MovieLens100K/PopScorer                        coordinator.py:402
+[2026/07/10 17:19:05] INFO     Running phase 'Predict' for MovieLens100K/PopScorer                    coordinator.py:402
+[2026/07/10 17:19:15] INFO     Running phase 'Evaluate' for MovieLens100K/PopScorer                   coordinator.py:402
+Traceback (most recent call last):
+  File "/app/.venv/lib/python3.12/site-packages/omnirec/runner/coordinator.py", line 212, in run
+    self.run_split(
+  File "/app/.venv/lib/python3.12/site-packages/omnirec/runner/coordinator.py", line 365, in run_split
+    self._evaluator.run_evaluation(
+  File "/app/.venv/lib/python3.12/site-packages/omnirec/runner/evaluation.py", line 54, in run_evaluation
+    mr = m.calculate(predictions, test)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/.venv/lib/python3.12/site-packages/omnirec/metrics/ranking.py", line 74, in calculate
+    top_k_dict = self.make_topk_dict(predictions)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/.venv/lib/python3.12/site-packages/omnirec/metrics/ranking.py", line 24, in make_topk_dict
+    for user, group in predictions.sort_values("rank").groupby("user"):
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/.venv/lib/python3.12/site-packages/pandas/core/frame.py", line 7211, in sort_values
+    k = self._get_label_or_level_values(by[0], axis=axis)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/.venv/lib/python3.12/site-packages/pandas/core/generic.py", line 1914, in _get_label_or_level_values
+    raise KeyError(key)
+KeyError: 'rank'
+                      CRITICAL Stopping runner...                                                     coordinator.py:445
+None
+{'NDCG@10': None, 'Recall@1': None}
+Saved plot to /app/out/workspace/working/prototype_metrics.png
+Execution time: 4 minutes (time limit is an hour).

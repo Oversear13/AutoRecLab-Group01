@@ -1,0 +1,20 @@
+{
+    "jobs": {
+        "MovieLens1M-e5ebdb32|LensKit.ItemKNNScorer-dd803d4b-42": {
+            "next_phase": 3,
+            "next_fold": null,
+            "config": {
+                "max_nbrs": 20,
+                "min_nbrs": 5
+            }
+        },
+        "MovieLens1M-e5ebdb32|LensKit.ImplicitMFScorer-27495fcd-42": {
+            "next_phase": 3,
+            "next_fold": null,
+            "config": {
+                "n_factors": 50,
+                "n_iters": 20
+            }
+        }
+    }
+}

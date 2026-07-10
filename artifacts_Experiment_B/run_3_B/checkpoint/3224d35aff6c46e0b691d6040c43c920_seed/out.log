@@ -1,0 +1,40 @@
+[2026/07/10 17:23:10] INFO     Canonicalized data set already exists, skipping download and       recsys_data_set.py:205
+                               canonicalization.                                                                        
+Loaded dataset: MovieLens100K
+Raw interactions: 100000
+                      INFO     Pruning data set to 5-core.                                            core_pruning.py:19
+                      INFO     Number of interactions before: 100000                                  core_pruning.py:20
+                      INFO     Number of interactions after: 99287                                    core_pruning.py:63
+Post-preprocessing stats: {'dataset': 'MovieLens100K', 'train_interactions': 68739, 'val_interactions': 15197, 'test_interactions': 15351, 'total_interactions': 99287}
+[2026/07/10 17:23:11] INFO     Reusing existing env 'LensKit_env' at /root/.omnirec/data/envs/LensKit_env     envs.py:48
+                      INFO     Starting runner...                                                     coordinator.py:272
+[2026/07/10 17:23:12] INFO     Runner started with pid: 2517                                          coordinator.py:297
+                      INFO     Connecting to runner...                                                coordinator.py:135
+                      INFO     Running phase 'Fit' for MovieLens100K/PopScorer                        coordinator.py:402
+[2026/07/10 17:23:22] INFO     Running phase 'Predict' for MovieLens100K/PopScorer                    coordinator.py:402
+[2026/07/10 17:23:32] INFO     Running phase 'Evaluate' for MovieLens100K/PopScorer                   coordinator.py:402
+Traceback (most recent call last):
+  File "/app/.venv/lib/python3.12/site-packages/omnirec/runner/coordinator.py", line 212, in run
+    self.run_split(
+  File "/app/.venv/lib/python3.12/site-packages/omnirec/runner/coordinator.py", line 365, in run_split
+    self._evaluator.run_evaluation(
+  File "/app/.venv/lib/python3.12/site-packages/omnirec/runner/evaluation.py", line 54, in run_evaluation
+    mr = m.calculate(predictions, test)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/.venv/lib/python3.12/site-packages/omnirec/metrics/ranking.py", line 74, in calculate
+    top_k_dict = self.make_topk_dict(predictions)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/.venv/lib/python3.12/site-packages/omnirec/metrics/ranking.py", line 24, in make_topk_dict
+    for user, group in predictions.sort_values("rank").groupby("user"):
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/.venv/lib/python3.12/site-packages/pandas/core/frame.py", line 7211, in sort_values
+    k = self._get_label_or_level_values(by[0], axis=axis)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/.venv/lib/python3.12/site-packages/pandas/core/generic.py", line 1914, in _get_label_or_level_values
+    raise KeyError(key)
+KeyError: 'rank'
+[2026/07/10 17:23:33] CRITICAL Stopping runner...                                                     coordinator.py:445
+None
+{'NDCG@10': None, 'Recall@1': None}
+Saved plot to /app/out/workspace/working/prototype_metrics.png
+Execution time: 24 seconds (time limit is an hour).

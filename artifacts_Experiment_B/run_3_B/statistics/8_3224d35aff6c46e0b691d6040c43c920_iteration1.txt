@@ -1,0 +1,20 @@
+ID: 3224d35aff6c46e0b691d6040c43c920_iteration1
+Position: 8
+Score: 0.45454545454545453
+Is Buggy: True
+Is Satisfactory: False
+Execution Time: 213.95374846458435
+Lines of Code: 107
+Empty Lines: 17
+Comment Lines: 0
+Total Characters: 3551
+Libraries Imported: json, matplotlib, omnirec, os
+Count of Libraries Imported: 4
+Functions: 2
+Classes: 0
+Average Arguments per Function: 1.0
+Variable Assignments: 18
+Loops: 0
+Conditions: 4
+Insertions: 23
+Deletions: 7

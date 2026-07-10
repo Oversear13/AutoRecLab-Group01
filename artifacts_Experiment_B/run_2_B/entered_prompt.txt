@@ -1,0 +1,3 @@
+Build a reproducible top-N recommendation experiment
+on MovieLens. Compare two candidate algorithms and report
+NDCG@10, Recall@1.!start

@@ -1,0 +1,20 @@
+ID: 7d39632124794362b5c5483aba487bc0
+Position: 4
+Score: 0.0
+Is Buggy: True
+Is Satisfactory: False
+Execution Time: 4.270535945892334
+Lines of Code: 91
+Empty Lines: 16
+Comment Lines: 0
+Total Characters: 3042
+Libraries Imported: json, matplotlib, omnirec, pandas, os
+Count of Libraries Imported: 5
+Functions: 2
+Classes: 0
+Average Arguments per Function: 1.0
+Variable Assignments: 14
+Loops: 0
+Conditions: 4
+Insertions: 23
+Deletions: 28

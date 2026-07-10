@@ -1,0 +1,20 @@
+ID: 8aed215bf8024a53af32e33f25e21043
+Position: 2
+Score: 0.3333333333333333
+Is Buggy: True
+Is Satisfactory: False
+Execution Time: 247.68932151794434
+Lines of Code: 91
+Empty Lines: 18
+Comment Lines: 2
+Total Characters: 2975
+Libraries Imported: omnirec, pandas, pathlib, os, matplotlib
+Count of Libraries Imported: 5
+Functions: 1
+Classes: 0
+Average Arguments per Function: 0.0
+Variable Assignments: 15
+Loops: 1
+Conditions: 2
+Insertions: 16
+Deletions: 5
