@@ -3,18 +3,23 @@ from pathlib import Path
 import tomli_w
 from pydantic_settings import BaseSettings, SettingsConfigDict, TomlConfigSettingsSource
 
+from utils.log import _ROOT_LOGGER
+
+logger = _ROOT_LOGGER.getChild("config")
+
 CONFIG_PATH = Path("config.toml")
 
 
 class TreeSearchConfig(BaseSettings):
     num_draft_nodes: int = 3
     debug_prob: float = 0.3
-    epsilon: float = 0.3
+    epsilon: float = 0.4
     max_iterations: int = 10
+    refinement_iterations: int = 2
 
 
 class ExecConfig(BaseSettings):
-    timeout: int = 3600
+    timeout: int = 5400
     enable_type_checking: bool = True
     max_type_check_attempts: int = 3
     keep_only_relevant_files: bool = False
@@ -23,6 +28,8 @@ class ExecConfig(BaseSettings):
 class CodeConfig(BaseSettings):
     model: str = "gpt-5-mini"
     model_temp: float = 1.0
+    request_timeout: int = 120
+    max_retries: int = 3
 
 
 class AgentConfig(BaseSettings):
@@ -33,7 +40,10 @@ class AgentConfig(BaseSettings):
 
 class Config(BaseSettings):
     model_config = SettingsConfigDict(
-        env_prefix="ARL_", env_nested_delimiter="__", toml_file=CONFIG_PATH, frozen=False
+        env_prefix="ARL_",
+        env_nested_delimiter="__",
+        toml_file=CONFIG_PATH,
+        frozen=False,
     )
 
     out_dir: str = "./out"
@@ -74,6 +84,9 @@ def _load_config() -> Config:
     config = Config()
     if not CONFIG_PATH.exists():
         # write default config if file doesn't exist
-        CONFIG_PATH.write_text(tomli_w.dumps(config.model_dump()))
+        logger.warning(
+            "No config.toml found, writing default config.toml and using default configuration values."
+        )
+        CONFIG_PATH.write_text(tomli_w.dumps(config.model_dump(exclude_none=True)))
 
     return config

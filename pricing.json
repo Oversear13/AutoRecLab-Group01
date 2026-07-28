@@ -1,7 +1,7 @@
 {
   "_comment": "OpenAI Model Pricing - All prices are in USD per 1 million tokens",
   "_last_updated": "2026-05-01",
-  
+
   "models": [
     {
         "model": "gpt-5.5",

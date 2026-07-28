@@ -5,6 +5,7 @@ num_draft_nodes = 2
 debug_prob = 0.3
 epsilon = 0.4
 max_iterations = 5
+refinement_iterations = 2
 
 [exec]
 timeout = 5400
@@ -18,3 +19,5 @@ k_fold_validation = 1
 [agent.code]
 model = "gpt-5.4-mini"
 model_temp = 1.0
+request_timeout = 120
+max_retries = 3

@@ -49,6 +49,8 @@ In that case, delete the line "ENTRYPOINT ["/app/docker-entrypoint.sh"]" from th
 AutoRecLab is an autonomous research agent for recommender-systems experimentation.
 It turns a natural-language research task into executable code, evaluates intermediate results, and improves solutions iteratively via tree search.
 
+For a full English documentation set, including setup, architecture, usage examples, and FAQ, see [docs/README.md](docs/README.md).
+
 This `develop` branch is where new features are integrated continuously between paper releases.
 
 ## Why this branch exists
@@ -185,6 +187,11 @@ uv run main.py --list-models
 uv run main.py --model "gpt-4o"
 ```
 
+**Append a timestamp to the output directory for this run:**
+```bash
+uv run main.py --timestamp-out-dir
+```
+
 ## Embeddings / documentation index
 
 AutoRecLab uses FAISS vector stores in `ragEmbeddings/` for docs-aware coding.
@@ -227,7 +234,11 @@ k_fold_validation = 1
 [agent.code]
 model = "gpt-5-mini"
 model_temp = 1.0
+request_timeout = 120
+max_retries = 3
 ```
+
+Note: If `config.toml` is missing, AutoRecLab will using default values shown above and use those defaults at runtime. If an existing `config.toml` omits only some parameters, AutoRecLab will apply default values for the missing parameters while keeping any values you provided. When no `config.toml` is found, AutoRecLab emits an informational console log message indicating that the default configuration is being written and used.
 
 Environment override pattern:
 - Prefix: `ARL_`
@@ -288,6 +299,10 @@ Project includes:
 ├── tests/                     # Tests
 └── viz.py                     # Tree rendering utility
 ```
+
+## Documentation
+
+A detailed English documentation set is available in [docs/README.md](docs/README.md), covering setup, architecture, usage examples, and FAQ.
 
 ## Known develop-branch caveats
 

@@ -13,7 +13,7 @@ class DatasetInfo:
 
     Attributes
     __________
-    
+
     download_urls : Optional[Union[str, List[str]]]
         URL or list of URLs to download the dataset.
         If a list is provided, URLs are tried in order until one succeeds

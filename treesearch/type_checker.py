@@ -1,8 +1,6 @@
-import json
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
 
 from utils.log import _ROOT_LOGGER
 
@@ -60,7 +58,16 @@ class TypeChecker:
         with open(file_path, "w") as f:
             f.write(code)
 
-        concise_cmd = ["uv", "run", "ty", "check", "--no-progress", "--output-format", "concise", str(file_path)]
+        concise_cmd = [
+            "uv",
+            "run",
+            "ty",
+            "check",
+            "--no-progress",
+            "--output-format",
+            "concise",
+            str(file_path),
+        ]
         full_cmd = ["uv", "run", "ty", "check", "--no-progress", str(file_path)]
 
         try:
@@ -93,7 +100,9 @@ class TypeChecker:
 
             try:
                 for line in result.stdout.strip().split("\n"):
-                    if line.strip() and ("error[" in line.lower() or "warning[" in line.lower()):
+                    if line.strip() and (
+                        "error[" in line.lower() or "warning[" in line.lower()
+                    ):
                         # Try to parse the line: file:line:col: error[rule] message
                         parts = line.split(":", 3)
                         if len(parts) >= 4:
@@ -106,14 +115,14 @@ class TypeChecker:
                                 col_num = int(parts[2].strip())
                             except ValueError:
                                 col_num = 0
-                            
+
                             # The rest is "error[rule] message" or "warning[rule] message"
                             rest = parts[3].strip()
-                            
+
                             severity = "error"
                             rule = ""
                             message = rest
-                            
+
                             # Parse "error[rule-name]" or "warning[rule-name]"
                             if rest.lower().startswith("error["):
                                 severity = "error"
@@ -121,15 +130,19 @@ class TypeChecker:
                                 # Extract rule name and message
                                 rule_end = rest.find("]")
                                 if rule_end > 0:
-                                    rule = rest[6:rule_end]  # Extract text between "error[" and "]"
-                                    message = rest[rule_end + 1:].strip()
+                                    rule = rest[
+                                        6:rule_end
+                                    ]  # Extract text between "error[" and "]"
+                                    message = rest[rule_end + 1 :].strip()
                             elif rest.lower().startswith("warning["):
                                 severity = "warning"
                                 rule_end = rest.find("]")
                                 if rule_end > 0:
-                                    rule = rest[8:rule_end]  # Extract text between "warning[" and "]"
-                                    message = rest[rule_end + 1:].strip()
-                            
+                                    rule = rest[
+                                        8:rule_end
+                                    ]  # Extract text between "warning[" and "]"
+                                    message = rest[rule_end + 1 :].strip()
+
                             errors.append(
                                 {
                                     "file": file,
@@ -144,7 +157,9 @@ class TypeChecker:
                 logger.warning(f"Failed to parse ty output: {e}")
                 # Fallback: check return code and stderr
                 if result.returncode != 0:
-                    error_count = max(1, result.stderr.count("error") + result.stdout.count("error:"))
+                    error_count = max(
+                        1, result.stderr.count("error") + result.stdout.count("error:")
+                    )
                     if not errors:  # Only add fallback error if we didnt parse any
                         errors = [
                             {

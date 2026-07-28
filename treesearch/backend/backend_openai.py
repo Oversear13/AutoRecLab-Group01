@@ -6,7 +6,6 @@ from funcy import notnone, once, select_values
 
 from utils.log import _ROOT_LOGGER
 
-
 from .utils import FunctionSpec, OutputType, backoff_create, opt_messages_to_list
 
 logger = _ROOT_LOGGER.getChild("backend/openai")
@@ -57,12 +56,12 @@ def query(
     if func_spec is None:
         output = choice.message.content
     else:
-        assert (
-            choice.message.tool_calls
-        ), f"function_call is empty, it is not a function call: {choice.message}"
-        assert (
-            choice.message.tool_calls[0].function.name == func_spec.name
-        ), "Function name mismatch"
+        assert choice.message.tool_calls, (
+            f"function_call is empty, it is not a function call: {choice.message}"
+        )
+        assert choice.message.tool_calls[0].function.name == func_spec.name, (
+            "Function name mismatch"
+        )
         try:
             logger.debug(f"[cyan]Raw func call response: {choice}[/cyan]")
             output = json.loads(choice.message.tool_calls[0].function.arguments)

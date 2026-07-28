@@ -72,12 +72,7 @@ def _node_attr(node: Node) -> str:
 
 def _edge_attr(node: Node, child: Node) -> str:
     _, border, _ = _score_color(child)
-    return (
-        f'color="{border}" '
-        f'penwidth="1.2" '
-        f'arrowsize="0.6" '
-        f'arrowhead="vee" '
-    )
+    return f'color="{border}" penwidth="1.2" arrowsize="0.6" arrowhead="vee" '
 
 
 GRAPH_OPTIONS = [

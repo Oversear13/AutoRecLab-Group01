@@ -1,5 +1,4 @@
 import json
-import random
 from pathlib import Path
 from typing import Any, Optional
 
@@ -34,15 +33,17 @@ class MinimalAgent:
         task_desc: str,
         cfg: Config,
         memory_summary=None,
-        evaluation_metrics=None,
-        stage_name=None,
+        evaluation_metrics: list[str] | None = None,
+        stage_name: str | None = None,
+        selected_datasets: list[str] | None = None,
     ):
         logger.info("Initializing agent...")
         self.task_desc = task_desc
         self.memory_summary = memory_summary
         self.cfg = cfg
-        self.evaluation_metrics = evaluation_metrics
+        self.evaluation_metrics: list[str] | None = evaluation_metrics
         self.stage_name = stage_name
+        self.selected_datasets: list[str] | None = selected_datasets
         self._out_dir = mkdir(Path(cfg.out_dir))
         logger.info("Agent initialized!")
 
@@ -57,11 +58,16 @@ class MinimalAgent:
         )
 
     async def _async_init(self):
-        self.selected_datasets = await self._select_datasets()
+        if self.selected_datasets is None:
+            self.selected_datasets = await self._select_datasets()
         await self._set_code_requirements()
-        (self._out_dir / "code_requirements.json").write_text(
+        stage_suffix = self.stage_name or "default"
+        (self._out_dir / f"code_requirements_{stage_suffix}.json").write_text(
             json.dumps(self.code_requirements)
         )
+        # (self._out_dir / "code_requirements.json").write_text(
+        #     json.dumps(self.code_requirements)
+        # )
 
     @property
     def _prompt_environment(self):
@@ -87,7 +93,7 @@ class MinimalAgent:
         impl_guideline = [
             "Implementation Guidelines:",
             f"1. Framework: Use OmniRec exclusively (wraps Lenskit, RecBole, RecPack, Elliot, etc.). Search these docs when unsure: {VECTOR_STORE_NAMES}. NEVER implement algorithms from scratch or call Lenskit/RecBole/other backend libraries directly — always go through the OmniRec API.",
-            f"2. Datasets: Use only: {', '.join(self.selected_datasets)}",
+            f"2. Datasets: Use only: {', '.join(self.selected_datasets or [])}",
             "3. Code Structure:",
             "   - Single-file Python script with `if __name__ == '__main__':`",
             "   - Keep simple - use only well-documented APIs",
@@ -104,6 +110,28 @@ class MinimalAgent:
             "   - Verify object attributes exist (e.g., SplitData structure)",
             "   - Use only public APIs (no underscore-prefixed methods)",
         ]
+
+        if self.stage_name == "prototype":
+            impl_guideline.extend(
+                [
+                    "8. Prototype stage constraints:",
+                    "   - Use EXACTLY ONE dataset from the allowed list (pick a single dataset).",
+                    "   - Use EXACTLY ONE algorithm to validate the end-to-end pipeline.",
+                    "   - Use a minimal metric subset (e.g., one cutoff like @10) to keep runtime short.",
+                    "   - Create at least one basic plot to prove the reporting pipeline works.",
+                ]
+            )
+        elif self.stage_name == "final":
+            impl_guideline.extend(
+                [
+                    "8. Final stage constraints:",
+                    "   - Use ALL requested datasets from the allowed list.",
+                    "   - Run all relevant algorithms available via OmniRec for the requested backends.",
+                    "   - Evaluate ALL requested metrics and cutoffs.",
+                    "   - Produce publication-ready plots for every requested metric.",
+                    "   - Refinement style: EXTEND the previous working solution with minimal structural change; do not rewrite from scratch unless strictly required for correctness.",
+                ]
+            )
 
         if self.cfg.agent.k_fold_validation > 1:
             impl_guideline.append(
@@ -122,7 +150,9 @@ class MinimalAgent:
             ),
             "Research task": self.task_desc,
             "Code Requirements": (
-                self.code_requirements if hasattr(self, "code_requirements") else ""
+                self.code_requirements
+                if hasattr(self, f"code_requirements_{self.stage_name}")
+                else ""
             ),
             "Memory": self.memory_summary if self.memory_summary else "",
             "Instructions": {},
@@ -177,10 +207,23 @@ class MinimalAgent:
         else:
             enhanced_bug_info = f"Previous implementation had issues: {bug_analysis}"
 
+        intro = (
+            "You are a Senior Debugging Engineer. Your goal is to resolve execution errors in a recommender system script. "
+            "You must treat the 'Execution output' as truth."
+        )
+        if self.stage_name == "final":
+            intro += (
+                " This is a refinement step: the previous implementation is assumed mostly correct. "
+                "Make the SMALLEST set of changes needed to fix the error and keep the existing structure and outputs."
+            )
+        else:
+            intro += (
+                " The 'Previous implementation' may be fundamentally flawed API-wise. "
+                "Do not assume the previous code's use of libraries was correct."
+            )
+
         prompt: Any = {
-            "Introduction": (
-                "You are a Senior Debugging Engineer. Your goal is to resolve execution errors in a recommender system script. You must treat the 'Execution output' as truth and the 'Previous implementation' as potentially fundamentally flawed API-wise. Do not assume the previous code's use of libraries was correct."
-            ),
+            "Introduction": intro,
             "Research task": self.task_desc,
             "Previous (buggy) implementation": parent_node.code,
             "Execution output": parent_node.term_out,
@@ -194,6 +237,7 @@ class MinimalAgent:
                 f"2. DOCUMENTATION VERIFICATION: If the error involves {VECTOR_STORE_NAMES} you MUST search the documentation for the correct class/method signature before writing the fix.",
                 "3. EXPLAIN THE FIX: Write 3-5 sentences describing the root cause and the verified solution. Cite the documentation if an API change was made.",
                 "4. DO NOT GUESS: If the documentation does not show the method you need, search for alternatives or 'examples' in the MCP server.",
+                "5. CHANGE BUDGET: Keep changes minimal; preserve the overall structure and any already-working reporting/plot outputs.",
             ],
         }
         prompt["Instructions"] |= self._prompt_impl_guideline
@@ -212,11 +256,18 @@ class MinimalAgent:
                 - Feedback: {parent_node.score.feedback}
                 """
 
+        intro = (
+            "You are an experienced recommender systems researcher. You are provided with a previously developed "
+            "implementation. Your task is to improve it to meet the research task requirements and address any issues identified in the 'Performance Analysis'."
+        )
+        if self.stage_name == "final":
+            intro += (
+                " This is a FINAL-stage refinement step: treat the previous implementation as the base. "
+                "Prefer minimal, incremental edits (add datasets/algorithms/metrics/plots) over rewriting or reorganizing the whole script."
+            )
+
         prompt: Any = {
-            "Introduction": (
-                "You are an experienced recommender systems researcher. You are provided with a previously developed "
-                "implementation. Your task is to improve it to meet the research task requirements and address any issues identified in the 'Performance Analysis'."
-            ),
+            "Introduction": intro,
             "Research task": self.task_desc,
             "Memory": self.memory_summary if self.memory_summary else "",
             "Performance Analysis & Scoring": score_info,
@@ -227,13 +278,24 @@ class MinimalAgent:
             "Code": parent_node.code,
         }
 
-        prompt["Instructions"] |= {
-            "Refactoring & Compliance Guidelines": [
+        if self.stage_name == "final":
+            refactor_guidelines = [
+                "1. ANALYZE FEEDBACK: Map each piece of feedback from the 'Performance Analysis' to a specific line or block in your previous code.",
+                "2. CONSULT THE SOURCE: For every requirement that was marked as 'unsatisfactory,' search the documentation for the canonical way to implement that feature.",
+                "3. EXTEND, DON'T REWRITE: Treat the previous code as the base. Make the smallest set of changes needed to add missing datasets/algorithms/metrics/plots and satisfy requirements.",
+                "4. PRESERVE STRUCTURE: Keep existing functions, output paths, and the reporting pipeline unless a refactor is strictly required for correctness.",
+                "5. PRESERVE LOGIC: Ensure the research task's scientific logic remains intact while extending the code.",
+            ]
+        else:
+            refactor_guidelines = [
                 "1. ANALYZE FEEDBACK: Map each piece of feedback from the 'Performance Analysis' to a specific line or block in your previous code.",
                 "2. CONSULT THE SOURCE: For every requirement that was marked as 'unsatisfactory,' search the documentation for the 'canonical' way to implement that feature.",
                 "3. REFACTOR, DON'T PATCH: Do not just add 'if' statements to hide errors. Rewrite the implementation to align with the framework's intended API usage as found in the docs.",
                 "4. PRESERVE LOGIC: Ensure the research task's scientific logic remains intact while updating the code structure to meet the requirements.",
             ]
+
+        prompt["Instructions"] |= {
+            "Refactoring & Compliance Guidelines": refactor_guidelines
         }
         prompt["Instructions"] |= self._prompt_impl_guideline
 
@@ -339,11 +401,31 @@ class MinimalAgent:
 
     async def _set_code_requirements(self):
         logger.info("Engineering code requirements...")
+        stage_guidance = ""
+        if self.stage_name == "prototype":
+            stage_guidance = """
+        STAGE: PROTOTYPE
+        Generate a minimal requirement set for a fast pilot implementation.
+        - Use exactly one dataset from the selected list.
+        - Use exactly one algorithm.
+        - Use a minimal subset of metrics (e.g., a single cutoff).
+        - Ensure at least one plot is produced to validate the reporting pipeline.
+        """
+        elif self.stage_name == "final":
+            stage_guidance = """
+        STAGE: FINAL
+        Generate a full requirement set that completely satisfies the user request.
+        - Use all requested datasets and algorithms.
+        - Evaluate all requested metrics and cutoffs.
+        - Use the specified validation protocol and produce all requested plots.
+        """
         requirements_prompt = f"""
         You are an expert recommender systems researcher defining experiment requirements.
 
         Research task: {self.task_desc}
         Selected datasets: {self.selected_datasets}
+
+        {stage_guidance}
 
         Generate requirements that specify critical aspects of the experiment that must be fulfilled.
 
@@ -389,13 +471,15 @@ class MinimalAgent:
         Research task: {self.task_desc}
         Generated requirements: {self.code_requirements}
 
+        {stage_guidance}
+
         REVIEW CRITERIA:
 
         1. Necessity: Is each requirement essential for THIS research task?
         - Keep only requirements whose absence would make the experiment fail or invalid
         - Remove general best practices, optimizations, or requirements not relevant to this specific task
 
-        2. Appropriate detail level: 
+        2. Appropriate detail level:
         - Remove excessive implementation details (step-by-step procedures, exact formulas, nested logic)
         - Retain critical technical specifications (which framework, which metrics, which methodology)
 
@@ -425,13 +509,22 @@ class MinimalAgent:
         """Analyze execution results using both review function spec and scoring system."""
         node.absorb_exec_result(exec_result)
 
+        stage_context = ""
+        if self.stage_name == "prototype":
+            stage_context = (
+                "STAGE: PROTOTYPE. Evaluate ONLY against the provided prototype requirements. "
+                "Do NOT reference or penalize missing full-scope user-request items (extra datasets, extra algorithms, extra metrics)."
+            )
+        elif self.stage_name == "final":
+            stage_context = "STAGE: FINAL. Evaluate against the full user-request requirements and the provided final requirements list."
+
         logger.debug("Scoring node %s", node.id)
         logger.debug("Requirements count: %d", len(node.requirements))
 
         # Full output
-        logger.debug("".join(node._term_out))
-        # Truncated output
-        logger.debug(node._term_out)
+        logger.debug(
+            node.term_out if node.term_out else "No experiment output available."
+        )
 
         # First, use the review_func_spec for buggy node identification
         review_prompt = {
@@ -441,6 +534,8 @@ class MinimalAgent:
                 "Focus on identifying execution failures, errors, or other issues that would prevent the code from working properly."
             ),
             "Research Task": self.task_desc,
+            "Stage Context": stage_context,
+            "Requirements": [r.description for r in node.requirements],
             "Implementation": node.code,
             "Execution Output": (
                 node.term_out if node.term_out else "No output generated"
@@ -453,6 +548,7 @@ class MinimalAgent:
                 "- Incorrect or nonsensical results",
                 "If there's a bug, provide a clear summary of the issue and suggest how to fix it.",
                 "If the execution was successful, leave the summary empty.",
+                "IMPORTANT: Judge completeness only relative to the provided requirements list for this stage.",
             ],
         }
 
@@ -525,6 +621,7 @@ class MinimalAgent:
                 ),
                 "Requirement": req.description,
                 "Research Task": self.task_desc,
+                "Stage Context": stage_context,
                 "Implementation": node.code,
                 "Execution output": node.term_out,
             }
@@ -567,6 +664,7 @@ class MinimalAgent:
                 ),
                 "Requirements": [r.description for r in node.requirements],
                 "Research Task": self.task_desc,
+                "Stage Context": stage_context,
                 "Implementation": node.code,
                 "Execution output": node.term_out,
             }
@@ -589,12 +687,16 @@ class MinimalAgent:
                 )
 
                 if not confirm_result.confirmed:
-                    missing = {m.strip().lower() for m in confirm_result.missing_requirements}
+                    missing = {
+                        m.strip().lower() for m in confirm_result.missing_requirements
+                    }
                     for req in node.requirements:
                         if req.description.lower() in missing:
                             req.is_fulfilled = False
                             if req.feedback:
-                                req.feedback = req.feedback.strip() + " Coverage check failed."
+                                req.feedback = (
+                                    req.feedback.strip() + " Coverage check failed."
+                                )
                             else:
                                 req.feedback = "Coverage check failed."
             except Exception as e:
@@ -622,7 +724,9 @@ class MinimalAgent:
             )
 
         score = num_fulfilled / len(node.requirements)
-        logger.debug("Final score: %s (%d/%d)", score, num_fulfilled, len(node.requirements))
+        logger.debug(
+            "Final score: %s (%d/%d)", score, num_fulfilled, len(node.requirements)
+        )
 
         if node.is_buggy:
             is_satisfactory = False

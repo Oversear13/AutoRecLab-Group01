@@ -69,8 +69,12 @@ class Interpreter:
         self.agent_file_path = self.working_dir / agent_file_name
 
     def cleanup_session(self):
-        # TODO: Do some cleanup here if necessary
-        pass
+        try:
+            if self.agent_file_path.exists():
+                self.agent_file_path.unlink()
+                logger.debug(f"Removed leftover agent file: {self.agent_file_path}")
+        except OSError as e:
+            logger.warning(f"Failed to remove agent file {self.agent_file_path}: {e}")
 
     def run(
         self,

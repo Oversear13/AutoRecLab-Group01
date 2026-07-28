@@ -93,8 +93,15 @@ class Query:
         input = prompt_to_md(input)
         tools = await self._get_all_tools()
 
+        from config import get_config
+
+        _cfg = get_config()
         model = ChatOpenAI(
-            model=self._model, temperature=self._temperature, use_responses_api=True
+            model=self._model,
+            temperature=self._temperature,
+            use_responses_api=True,
+            timeout=_cfg.agent.code.request_timeout,
+            max_retries=_cfg.agent.code.max_retries,
         )
 
         agent = Agent(

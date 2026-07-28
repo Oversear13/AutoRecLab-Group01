@@ -1,9 +1,7 @@
-import re
 from dataclasses import dataclass
 from typing import Callable, TypeAlias
 
 import backoff
-import black
 import jsonschema
 from dataclasses_json import DataClassJsonMixin
 
@@ -107,8 +105,6 @@ class FunctionSpec(DataClassJsonMixin):
             "type": "function",
             "function": {"name": self.name},
         }
-
-
 
 
 @backoff.on_predicate(

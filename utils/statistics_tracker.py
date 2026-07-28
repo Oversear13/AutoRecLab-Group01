@@ -1,12 +1,15 @@
-#Tracks the differents and statistics from node to node
+# Tracks the differents and statistics from node to node
+
+import ast
+import os
+import subprocess
+from pathlib import Path
+
+import matplotlib
 
 from treesearch.node import Node
 from utils.log import _ROOT_LOGGER
-import os
-import ast
-import subprocess
-from pathlib import Path
-import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
@@ -14,19 +17,18 @@ logger = _ROOT_LOGGER.getChild("statistics")
 
 
 class StatisticNode:
-
     def __init__(self):
-        self.out_dir : str = None
-        self.checkpoint_dir : str = None
-        self.last_node : Node = None
+        self.out_dir: str = None
+        self.checkpoint_dir: str = None
+        self.last_node: Node = None
 
-        self.id : str = ""
-        self.position : int = 0
+        self.id: str = ""
+        self.position: int = 0
 
-        self.score : float = 0.0
-        self.is_buggy : bool = False
-        self.is_satisfactory : bool = False
-        self.exec_time : float = 0.0
+        self.score: float = 0.0
+        self.is_buggy: bool = False
+        self.is_satisfactory: bool = False
+        self.exec_time: float = 0.0
 
         self.loc = 0
         self.empty_lines = 0
@@ -46,7 +48,12 @@ class StatisticNode:
     def analyze_code(self):
         code_file = os.path.join(self.checkpoint_dir, self.id, "code.py")
         try:
-            logger.debug("Analyzing code for statistic from node " + self.id + " at file: " + code_file)
+            logger.debug(
+                "Analyzing code for statistic from node "
+                + self.id
+                + " at file: "
+                + code_file
+            )
 
             with open(code_file, "r", encoding="utf-8") as f:
                 code_content = f.read()
@@ -69,29 +76,50 @@ class StatisticNode:
             self.libraries_imported = list(imports)
             self.sum_libraries_imported = len(self.libraries_imported)
 
-            sum_functions   = [n for n in ast.walk(ast_tree) if isinstance(n, ast.FunctionDef)]
-            sum_classes     = [n for n in ast.walk(ast_tree) if isinstance(n, ast.ClassDef)]
-            self.avg_ags_per_function    = (sum(len(f.args.args) for f in sum_functions) / len(sum_functions) if sum_functions else 0)
-            self.variable_assignments = sum(1 for n in ast.walk(ast_tree) if isinstance(n, ast.Assign))
-            self.sum_loops       = sum(1 for n in ast.walk(ast_tree) if isinstance(n, (ast.For, ast.While)))
-            self.sum_conditions  = sum(1 for n in ast.walk(ast_tree) if isinstance(n, ast.If))
-            self.sum_functions   = len(sum_functions)
-            self.sum_classes     = len(sum_classes)
+            sum_functions = [
+                n for n in ast.walk(ast_tree) if isinstance(n, ast.FunctionDef)
+            ]
+            sum_classes = [n for n in ast.walk(ast_tree) if isinstance(n, ast.ClassDef)]
+            self.avg_ags_per_function = (
+                sum(len(f.args.args) for f in sum_functions) / len(sum_functions)
+                if sum_functions
+                else 0
+            )
+            self.variable_assignments = sum(
+                1 for n in ast.walk(ast_tree) if isinstance(n, ast.Assign)
+            )
+            self.sum_loops = sum(
+                1 for n in ast.walk(ast_tree) if isinstance(n, (ast.For, ast.While))
+            )
+            self.sum_conditions = sum(
+                1 for n in ast.walk(ast_tree) if isinstance(n, ast.If)
+            )
+            self.sum_functions = len(sum_functions)
+            self.sum_classes = len(sum_classes)
 
             self.insertions = self.loc
             self.deletions = 0
             if self.last_node is not None:
-                code_file_last = os.path.join(self.checkpoint_dir, self.last_node.id, "code.py")
-                self.insertions, self.deletions = self.git_diff_stat(Path(code_file_last), Path(code_file))
+                code_file_last = os.path.join(
+                    self.checkpoint_dir, self.last_node.id, "code.py"
+                )
+                self.insertions, self.deletions = self.git_diff_stat(
+                    Path(code_file_last), Path(code_file)
+                )
 
         except Exception as e:
-            logger.warning("Could not analyze code for statistic from node " + self.id + ": " + str(e))
+            logger.warning(
+                "Could not analyze code for statistic from node "
+                + self.id
+                + ": "
+                + str(e)
+            )
             return
 
-    def normalize_file(self, path: Path):  
+    def normalize_file(self, path: Path):
         text = path.read_text().rstrip("\n")
         path.write_text(text + "\n")
-        
+
     def git_diff_stat(self, file1: Path, file2: Path):
         self.normalize_file(file1)
         self.normalize_file(file2)
@@ -112,7 +140,9 @@ class StatisticNode:
     def save_to_file(self):
         if self.out_dir is None:
             return
-        file_path = os.path.join(self.out_dir, str(self.position) + "_" + self.id + ".txt")
+        file_path = os.path.join(
+            self.out_dir, str(self.position) + "_" + self.id + ".txt"
+        )
         with open(file_path, "w") as f:
             f.write("ID: " + self.id + "\n")
             f.write("Position: " + str(self.position) + "\n")
@@ -125,10 +155,18 @@ class StatisticNode:
             f.write("Comment Lines: " + str(self.comment_lines) + "\n")
             f.write("Total Characters: " + str(self.total_characters) + "\n")
             f.write("Libraries Imported: " + ", ".join(self.libraries_imported) + "\n")
-            f.write("Count of Libraries Imported: " + str(self.sum_libraries_imported) + "\n")
+            f.write(
+                "Count of Libraries Imported: "
+                + str(self.sum_libraries_imported)
+                + "\n"
+            )
             f.write("Functions: " + str(self.sum_functions) + "\n")
             f.write("Classes: " + str(self.sum_classes) + "\n")
-            f.write("Average Arguments per Function: " + str(self.avg_ags_per_function) + "\n")
+            f.write(
+                "Average Arguments per Function: "
+                + str(self.avg_ags_per_function)
+                + "\n"
+            )
             f.write("Variable Assignments: " + str(self.variable_assignments) + "\n")
             f.write("Loops: " + str(self.sum_loops) + "\n")
             f.write("Conditions: " + str(self.sum_conditions) + "\n")
@@ -138,9 +176,7 @@ class StatisticNode:
         logger.debug("Saved statistic for node " + self.id + " to file: " + file_path)
 
 
-
 class StatisticsTracker:
-
     def __init__(self):
         self.out_dir = None
         self.checkpoint_dir = None
@@ -153,7 +189,6 @@ class StatisticsTracker:
         os.makedirs(stats_folder, exist_ok=True)
         self.out_dir = stats_folder
 
-
     def add_node(self, node: Node):
         new_node = StatisticNode()
         new_node.out_dir = self.out_dir
@@ -165,9 +200,9 @@ class StatisticsTracker:
         new_node.exec_time = node.exec_time
         new_node.position = len(self.nodes_ordered)
 
-        if(len(self.nodes_ordered) > 0):
+        if len(self.nodes_ordered) > 0:
             new_node.last_node = self.nodes_ordered[-1]
-        
+
         self.nodes_ordered.append(new_node)
 
         new_node.analyze_code()
@@ -175,11 +210,21 @@ class StatisticsTracker:
 
     def get_avgs(self):
         avgs = {
-            "score": 0, "exec_time": 0, "loc": 0, "empty_lines": 0,
-            "comment_lines": 0, "total_characters": 0, "sum_libraries_imported": 0,
-            "sum_functions": 0, "sum_classes": 0, "avg_ags_per_function": 0,
-            "variable_assignments": 0, "sum_loops": 0, "sum_conditions": 0,
-            "insertions": 0, "deletions": 0
+            "score": 0,
+            "exec_time": 0,
+            "loc": 0,
+            "empty_lines": 0,
+            "comment_lines": 0,
+            "total_characters": 0,
+            "sum_libraries_imported": 0,
+            "sum_functions": 0,
+            "sum_classes": 0,
+            "avg_ags_per_function": 0,
+            "variable_assignments": 0,
+            "sum_loops": 0,
+            "sum_conditions": 0,
+            "insertions": 0,
+            "deletions": 0,
         }
 
         for n in self.nodes_ordered:
@@ -216,14 +261,23 @@ class StatisticsTracker:
         ax.plot(x, values, color="#4C72B0", linewidth=2, zorder=2)
         ax.scatter(x, values, color="#4C72B0", s=60, zorder=3)
 
-        ax.axhline(avg_val, color="#DD4444", linewidth=1.5, linestyle="--", label=f"Avg: {avg_val:.1f}")
+        ax.axhline(
+            avg_val,
+            color="#DD4444",
+            linewidth=1.5,
+            linestyle="--",
+            label=f"Avg: {avg_val:.1f}",
+        )
 
         for xi, val in zip(x, values):
             ax.text(
                 xi,
                 val + (max(values) * 0.03 if max(values) > 0 else 0.03),
                 f"{val:.1f}" if isinstance(val, float) else str(val),
-                ha="center", va="bottom", fontsize=8, color="#222222"
+                ha="center",
+                va="bottom",
+                fontsize=8,
+                color="#222222",
             )
 
         ax.set_xticks(x)
@@ -241,15 +295,14 @@ class StatisticsTracker:
         plt.close(fig)
         logger.debug(f"Statistic plot saved for {label} → {png_path}")
 
-
     def summarize_statistics(self):
         if len(self.nodes_ordered) == 0:
             logger.warning("No nodes to summarize statistics for.")
             return
-        
+
         avgs = self.get_avgs()
 
-        #Save summary statistics to file
+        # Save summary statistics to file
         summary_file = os.path.join(self.out_dir, "summary_overall_nodes.txt")
         with open(summary_file, "w") as f:
             f.write("Total Nodes: " + str(len(self.nodes_ordered)) + "\n")
@@ -259,17 +312,29 @@ class StatisticsTracker:
             f.write("Average Empty Lines: " + str(avgs["empty_lines"]) + "\n")
             f.write("Average Comment Lines: " + str(avgs["comment_lines"]) + "\n")
             f.write("Average Total Characters: " + str(avgs["total_characters"]) + "\n")
-            f.write("Average Count of Libraries Imported: " + str(avgs["sum_libraries_imported"]) + "\n")
+            f.write(
+                "Average Count of Libraries Imported: "
+                + str(avgs["sum_libraries_imported"])
+                + "\n"
+            )
             f.write("Average Functions: " + str(avgs["sum_functions"]) + "\n")
             f.write("Average Classes: " + str(avgs["sum_classes"]) + "\n")
-            f.write("Average Arguments per Function: " + str(avgs["avg_ags_per_function"]) + "\n")
-            f.write("Average Variable Assignments: " + str(avgs["variable_assignments"]) + "\n")
+            f.write(
+                "Average Arguments per Function: "
+                + str(avgs["avg_ags_per_function"])
+                + "\n"
+            )
+            f.write(
+                "Average Variable Assignments: "
+                + str(avgs["variable_assignments"])
+                + "\n"
+            )
             f.write("Average Loops: " + str(avgs["sum_loops"]) + "\n")
             f.write("Average Conditions: " + str(avgs["sum_conditions"]) + "\n")
             f.write("Average Insertions: " + str(avgs["insertions"]) + "\n")
             f.write("Average Deletions: " + str(avgs["deletions"]) + "\n")
 
-        #Generate plots
+        # Generate plots
         self.generate_plot("Execution_Time", lambda n: n.exec_time)
         self.generate_plot("Lines_of_Code", lambda n: n.loc)
         self.generate_plot("Empty_Lines", lambda n: n.empty_lines)
@@ -286,8 +351,8 @@ class StatisticsTracker:
         self.generate_plot("Deletions", lambda n: n.deletions)
 
 
-
-
 _STATISTICS_TRACKER = StatisticsTracker()
+
+
 def get_statistics_tracker():
     return _STATISTICS_TRACKER

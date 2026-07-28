@@ -1,7 +1,7 @@
 [project]
-name = "isg-science-agent"
+name = "AutoRecLab"
 version = "1.0.0"
-description = "Add your description here"
+description = "An autonomous AI agent that uses tree search to iteratively develop, debug, and improve code implementations for recommender systems research tasks."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
@@ -50,5 +50,11 @@ package = true
 [tool.uv.sources]
 dataloader = { workspace = true }
 
+[tool.ruff.lint]
+extend-select = ["I"]
+
 [tool.setuptools]
 packages = ["cli", "treesearch", "utils"]
+
+[dependency-groups]
+dev = ["pre-commit>=4.6.0"]

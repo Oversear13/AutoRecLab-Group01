@@ -1,8 +1,9 @@
-from langchain.messages import AIMessage
-from datetime import datetime
-import warnings
-import time
 import json
+import time
+import warnings
+from datetime import datetime
+
+from langchain.messages import AIMessage
 
 
 def load_pricing():
@@ -10,27 +11,33 @@ def load_pricing():
         data = json.load(f)
     return data["models"]
 
+
 def get_model_table():
     prices = load_pricing()
-    
-    headers = ["Model Name", "Input Cost (per 1M tokens)", "Output Cost (per 1M tokens)"]
+
+    headers = [
+        "Model Name",
+        "Input Cost (per 1M tokens)",
+        "Output Cost (per 1M tokens)",
+    ]
     rows = [(p["model"], f"${p['input']}", f"${p['output']}") for p in prices]
-    
+
     col_widths = [
         max(len(headers[i]), max(len(row[i]) for row in rows))
         for i in range(len(headers))
     ]
-    
+
     def fmt_row(row):
         return "  ".join(cell.ljust(col_widths[i]) for i, cell in enumerate(row))
-    
+
     separator = "  ".join("-" * w for w in col_widths)
-    
+
     lines = [fmt_row(headers), separator] + [fmt_row(row) for row in rows]
     return "\n".join(lines)
 
 
 prices = load_pricing()
+
 
 # Base class for tracking token usage
 class TokenUsage:
@@ -45,28 +52,31 @@ class TokenUsage:
 
         self.timestamp = time.time()
         self.model = model
-        
+
         self._extract_usage(resp)
         self.calc_USD()
-    
+
     def _extract_usage(self, resp):
         pass
-    
+
     def __str__(self):
         return f"Used Tokens:  Prompt_Tokens={self.prompt_tokens}={self.prompt_USD}$ Completion_Tokens={self.completion_tokens}={self.completion_USD}$ Total_Tokens={self.total_tokens}={self.total_USD}$"
-    
+
     def calc_USD(self):
         self.foundModel = False
         for price in prices:
             if price["model"] == self.model:
                 self.prompt_USD = (self.prompt_tokens / 1_000_000) * price["input"]
-                self.completion_USD = (self.completion_tokens / 1_000_000) * price["output"]
+                self.completion_USD = (self.completion_tokens / 1_000_000) * price[
+                    "output"
+                ]
                 self.total_USD = self.prompt_USD + self.completion_USD
                 self.foundModel = True
         if not self.foundModel:
-            warnings.warn(f"Model '{self.model}' not found in price list. USD costs cannot be calculated. Please update 'pricing.json' with the correct model name and pricing information.")
+            warnings.warn(
+                f"Model '{self.model}' not found in price list. USD costs cannot be calculated. Please update 'pricing.json' with the correct model name and pricing information."
+            )
 
- 
 
 # Subclass for tracking token usage from OpenAI
 class TokenUsageOpenAi(TokenUsage):
@@ -75,20 +85,19 @@ class TokenUsageOpenAi(TokenUsage):
         for msg in messages:
             if isinstance(msg, AIMessage):
                 # Model Name
-                if hasattr(msg, 'response_metadata') and msg.response_metadata:
+                if hasattr(msg, "response_metadata") and msg.response_metadata:
                     if self.model is None:
-                        self.model = msg.response_metadata.get('model_name')
-                
+                        self.model = msg.response_metadata.get("model_name")
+
                 # Tokens
-                if hasattr(msg, 'usage_metadata') and msg.usage_metadata:
-                    self.prompt_tokens += msg.usage_metadata.get('input_tokens', 0)
-                    self.completion_tokens += msg.usage_metadata.get('output_tokens', 0)
-                    self.total_tokens += msg.usage_metadata.get('total_tokens', 0)
+                if hasattr(msg, "usage_metadata") and msg.usage_metadata:
+                    self.prompt_tokens += msg.usage_metadata.get("input_tokens", 0)
+                    self.completion_tokens += msg.usage_metadata.get("output_tokens", 0)
+                    self.total_tokens += msg.usage_metadata.get("total_tokens", 0)
 
 
 # Class for tracking hole token usage
 class CostsTracker:
-
     def __init__(self):
         self.costsList = []
         self.out_dir = None
@@ -97,15 +106,19 @@ class CostsTracker:
         if self.out_dir is not None:
             with open(self.out_dir / "costs_log.csv", "a") as f:
                 total = self.sum()
-                f.write(f"SUMMARIZED,-,-,{total['prompt_tokens']},{total['prompt_USD']},{total['completion_tokens']},{total['completion_USD']},{total['total_tokens']},{total['total_USD']}\n")
+                f.write(
+                    f"SUMMARIZED,-,-,{total['prompt_tokens']},{total['prompt_USD']},{total['completion_tokens']},{total['completion_USD']},{total['total_tokens']},{total['total_USD']}\n"
+                )
 
     def add(self, cost):
         self.costsList.append(cost)
 
         if self.out_dir is not None:
             with open(self.out_dir / "costs_log.csv", "a") as f:
-                f.write(f"{len(self.costsList)},{datetime.fromtimestamp(cost.timestamp).strftime('%Y-%m-%d %H:%M:%S')},{cost.model},{cost.prompt_tokens},{cost.prompt_USD},{cost.completion_tokens},{cost.completion_USD},{cost.total_tokens},{cost.total_USD}\n")
-        
+                f.write(
+                    f"{len(self.costsList)},{datetime.fromtimestamp(cost.timestamp).strftime('%Y-%m-%d %H:%M:%S')},{cost.model},{cost.prompt_tokens},{cost.prompt_USD},{cost.completion_tokens},{cost.completion_USD},{cost.total_tokens},{cost.total_USD}\n"
+                )
+
     def __str__(self):
         total = self.sum()
         return f"Total Used Tokens:  Prompt_Tokens={total['prompt_tokens']}={total['prompt_USD']}$ Completion_Tokens={total['completion_tokens']}={total['completion_USD']}$ Total_Tokens={total['total_tokens']}={total['total_USD']}$"
@@ -117,7 +130,7 @@ class CostsTracker:
             "total_tokens": 0,
             "prompt_USD": 0,
             "completion_USD": 0,
-            "total_USD": 0
+            "total_USD": 0,
         }
         for cost in self.costsList:
             total["prompt_tokens"] += cost.prompt_tokens
@@ -131,7 +144,9 @@ class CostsTracker:
     def set_out_dir(self, out_dir):
         self.out_dir = out_dir
         with open(self.out_dir / "costs_log.csv", "w") as f:
-            f.write("Position,Timestamp,Model,Prompt Tokens,Prompt USD,Completion Tokens,Completion USD,Total Tokens,Total USD\n")
+            f.write(
+                "Position,Timestamp,Model,Prompt Tokens,Prompt USD,Completion Tokens,Completion USD,Total Tokens,Total USD\n"
+            )
 
 
 _COST_TRACKER = CostsTracker()
