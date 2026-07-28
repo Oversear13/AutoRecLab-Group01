@@ -1,0 +1,1162 @@
+[33mcommit 7e027fe7f2579a47d728353077352e945c83b390[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdevelop[m[33m, [m[1;31morigin/develop[m[33m)[m
+Author: Oversear13 <Mike.Specht@gmx.de>
+Date:   Sat Jul 11 00:01:28 2026 +0200
+
+    reference to zenodo
+
+[33mcommit 794d271bf6cee529829373d918ce71cf6ebca4f3[m
+Author: Oversear13 <Mike.Specht@gmx.de>
+Date:   Fri Jul 10 23:55:35 2026 +0200
+
+    removed_artefacts_from_repo(available on zenodo:https://doi.org/10.5281/zenodo.21302065
+
+[33mcommit e9033733311862303ed01e45347381d54fde50b2[m
+Author: Nerox-User <96840956+Nerox-User@users.noreply.github.com>
+Date:   Fri Jul 10 20:33:20 2026 +0200
+
+    experiment B adding run2 and 3
+
+[33mcommit 54dca6de20f983aa156cfa9c8ec4882b36f39e79[m
+Author: Nerox-User <96840956+Nerox-User@users.noreply.github.com>
+Date:   Fri Jul 10 20:09:08 2026 +0200
+
+    experiment B directory change
+
+[33mcommit 5c97c054b49aa9345017c00c5a5947ad372d289d[m
+Author: Nerox-User <96840956+Nerox-User@users.noreply.github.com>
+Date:   Thu Jul 9 13:45:32 2026 +0200
+
+    adding experiment B artifacts
+
+[33mcommit b3fc9d9320e9f45ea589924927caba54a3fb8771[m
+Author: Nerox-User <96840956+Nerox-User@users.noreply.github.com>
+Date:   Tue Jun 30 17:15:05 2026 +0200
+
+    adding Artifacts from Experiment C
+
+[33mcommit 065a10153e02b139fe0bf39d0ee31d816d68a31b[m
+Author: Oversear13 <Mike.Specht@gmx.de>
+Date:   Tue Jun 30 17:03:20 2026 +0200
+
+    renamed the artefacts folder
+
+[33mcommit cde803730ae36ad38a940335bdada5a0bc46eb03[m
+Author: Oversear13 <Mike.Specht@gmx.de>
+Date:   Mon Jun 29 22:37:48 2026 +0200
+
+    moved code artefacts to a designated place
+
+[33mcommit c0429903a4bf764fbadcfd125cc0472256eae69d[m
+Author: Oversear13 <Mike.Specht@gmx.de>
+Date:   Mon Jun 29 12:09:50 2026 +0200
+
+    added artefacts for a new run of 29_06
+
+[33mcommit 70a4966a5d53fd18190535d9b076317cfcdbb7ca[m
+Merge: 499a2a1 5a1343d
+Author: Mike S. <Mike.Specht@gmx.de>
+Date:   Sun Jun 28 20:25:33 2026 +0200
+
+    Merge branch 'ISG-Siegen:develop' into develop
+
+[33mcommit 5a1343d8d634e91927cdeda6cede40de8f39814a[m
+Author: Justus Krell <justus@krell-nrw.de>
+Date:   Sat Jun 6 13:01:24 2026 +0200
+
+    chore: adjust whitelist of relevant files
+
+[33mcommit 499a2a1252e551177c49328a061d4b5ac24f012e[m
+Merge: d183d1d 0c5f4e7
+Author: Mike S. <Mike.Specht@gmx.de>
+Date:   Tue Jun 2 12:05:10 2026 +0200
+
+    Merge branch 'ISG-Siegen:develop' into develop
+
+[33mcommit 0c5f4e7bb699bcd2b21059f03f12455ff21109e7[m
+Author: Justus Krell <justus@krell-nrw.de>
+Date:   Mon Jun 1 10:25:23 2026 +0200
+
+    feat: add cli command to list all available models and to set them via cli.
+
+[33mcommit 36e3770eecbe619b2eac0dffc9ec1f716c0a7f0d[m
+Author: Justus Krell <justus@krell-nrw.de>
+Date:   Mon Jun 1 09:19:45 2026 +0200
+
+    feat: add cli command --list-datasets
+
+[33mcommit 20e06c53d2d332d907ab3a6f0489021217b1abbf[m
+Author: Justus Krell <justus@krell-nrw.de>
+Date:   Mon Jun 1 08:52:20 2026 +0200
+
+    feat: The entered data is logged to facilitate analysis
+
+[33mcommit 4436f068b66545c519c98dd92c2101d519bd4238[m
+Author: Justus Krell <justus@krell-nrw.de>
+Date:   Mon Jun 1 08:18:15 2026 +0200
+
+    feat: Enter prompt diretly by start or load them from an file
+
+[33mcommit d183d1d21e882275836c2adec7a360bf3931b6bc[m
+Merge: 4299d05 1c77e07
+Author: Mike S. <Mike.Specht@gmx.de>
+Date:   Thu May 28 11:38:43 2026 +0200
+
+    Merge branch 'ISG-Siegen:develop' into develop
+
+[33mcommit 4299d0527142deb403a0aee2aadd56790b921319[m
+Author: Oversear13 <Mike.Specht@gmx.de>
+Date:   Wed May 27 21:45:13 2026 +0200
+
+    Pull Request prevent Moving of  Datasets
+
+[33mcommit 1c77e071ef03def3b7b8aed15b8385f6bcfcb8e8[m
+Author: michi774 <schmidtmichael376@gmail.com>
+Date:   Wed May 27 16:59:15 2026 +0200
+
+    fix: fixes github issue #44
+
+[33mcommit dd334c76ef0b558ffe90942d2acf7991d45a28a6[m
+Author: PeteFedora <tristan.peter.schneider@gmail.com>
+Date:   Wed May 27 12:41:46 2026 +0200
+
+    feat(render): export individual trees and optimize combined layout
+    - Replace the virtual root approach with direct DOT string aggregation for the composite graph, removing the `anytree.Node` dependency.
+
+[33mcommit 9ab7905730e5d93b568a4140744fe901a5d6c5a2[m
+Merge: 02b1c94 e990fa5
+Author: Mike S. <Mike.Specht@gmx.de>
+Date:   Tue May 26 12:44:01 2026 +0200
+
+    Merge branch 'ISG-Siegen:develop' into develop
+
+[33mcommit e990fa5f023179a9f43f9aeb4a92d0ccf5987236[m
+Merge: 7e24b24 10e4364
+Author: michi774 <schmidtmichael376@gmail.com>
+Date:   Wed May 20 13:53:22 2026 +0200
+
+    Merge branch 'develop' of https://github.com/ISG-Siegen/AutoRecLab into develop
+
+[33mcommit 7e24b245b712c705258d40e24fddc140e1973516[m
+Author: michi774 <schmidtmichael376@gmail.com>
+Date:   Wed May 20 13:53:20 2026 +0200
+
+    update: updated default config for a good starting point
+
+[33mcommit 10e43648130a60bb2944f83070f1e69c9336a3da[m
+Author: Michael Schmidt <80267548+michi774@users.noreply.github.com>
+Date:   Wed May 20 13:49:15 2026 +0200
+
+    Fix caution message formatting in README
+    
+    Updated caution message formatting in README.
+
+[33mcommit 98538e1ef0500ede05e59012bcc2424253f72b01[m
+Author: Michael Schmidt <80267548+michi774@users.noreply.github.com>
+Date:   Wed May 20 13:46:55 2026 +0200
+
+    Update README with Docker build error guidance
+    
+    Added troubleshooting information for Docker build errors.
+
+[33mcommit 1f9425a35c71a6efe712a02cb00be61082389264[m
+Author: Michael Schmidt <80267548+michi774@users.noreply.github.com>
+Date:   Wed May 20 13:27:55 2026 +0200
+
+    Update README with prerequisites and setup instructions
+    
+    Added prerequisites and setup instructions for embeddings.
+
+[33mcommit 7c140bf92882636bbdf5950e24e8a591a4f75acd[m
+Author: michi774 <schmidtmichael376@gmail.com>
+Date:   Wed May 20 12:49:32 2026 +0200
+
+    chore: updated omnirec to the newest release version
+
+[33mcommit 02b1c9423269a130ef0705d4007bcb44ec6d64bc[m
+Author: Oversear13 <Mike.Specht@gmx.de>
+Date:   Mon May 18 17:33:10 2026 +0200
+
+    using gpt5.4mini
+
+[33mcommit 77245b785ee449be9e34efa3baa60da15f95e5a2[m
+Merge: e9f72bf b1d3bcd
+Author: Oversear13 <Mike.Specht@gmx.de>
+Date:   Mon May 18 17:31:42 2026 +0200
+
+    Merge branch 'master' into develop
+
+[33mcommit b1d3bcdb38e98bb1b53bacb83876c21e6369f833[m[33m ([m[1;32mmain[m[33m)[m
+Author: Nerox-User <96840956+Nerox-User@users.noreply.github.com>
+Date:   Sat May 16 15:58:52 2026 +0200
+
+    add last.fm
+
+[33mcommit 9e45169dc21bf763ac456d56976afbaf1629894d[m
+Author: Mike.S <Mike.Specht@gmx.de>
+Date:   Sat May 16 15:51:48 2026 +0200
+
+    Fix: Removed dataset .dat
+
+[33mcommit bec4891d597efbf8c2a30c29885f6e9132653706[m
+Author: Mike.S <Mike.Specht@gmx.de>
+Date:   Thu May 14 16:45:53 2026 +0200
+
+    added the amazon dataset
+
+[33mcommit e644f22b6cee8029a0ed0cdc04f8ec5c41126dc1[m
+Author: Mike.S <Mike.Specht@gmx.de>
+Date:   Thu May 14 16:26:28 2026 +0200
+
+    added the last.FM Dataset
+
+[33mcommit e9f72bfb8ab3029e37b56269cc9b24bcee462a10[m
+Author: michi774 <schmidtmichael376@gmail.com>
+Date:   Wed May 13 18:27:01 2026 +0200
+
+    feat: integrate second order requirements coverage confirmation checks and enhance logging in MinimalAgent
+
+[33mcommit 027a5714133ba6e7403b07abd4ce71354759d368[m
+Author: michi774 <schmidtmichael376@gmail.com>
+Date:   Tue May 12 13:59:14 2026 +0200
+
+    fix: fixes github issue #36
+
+[33mcommit 53c028fe7318d2100f1476b4eba9606e28ad5e4e[m
+Author: Justus Krell <justus@krell-nrw.de>
+Date:   Mon May 4 10:37:57 2026 +0200
+
+    feat: Flag added for keeping only relevant results
+
+[33mcommit 9a08ce473d039f5976f9e25bbb10804dd825bfb7[m
+Author: Justus Krell <justus@krell-nrw.de>
+Date:   Fri May 1 23:36:19 2026 +0200
+
+    chore: update pricing.json with the lastest models and prices
+
+[33mcommit 8730881cd0052a86c2b89cc72dd54b7e3694527f[m
+Author: Justus Krell <justus@krell-nrw.de>
+Date:   Fri May 1 23:30:37 2026 +0200
+
+    feat: Add statistics from node to node add automatic plot generations
+
+[33mcommit 43a3378984d0998db396e33cf90efd62bded69fa[m
+Author: Justus Krell <justus@krell-nrw.de>
+Date:   Fri May 1 22:22:06 2026 +0200
+
+    feat: Add advanced KPIs in node statistics
+
+[33mcommit 444072ec4f6b810116d8136be6e48dd7e8fd4350[m
+Author: Justus Krell <justus@krell-nrw.de>
+Date:   Fri May 1 20:56:30 2026 +0200
+
+    feat: Add absolut basic statistics for the generated nodes
+
+[33mcommit 2822044b7729bd3653d8887b9bb200efc4765b5e[m
+Author: BarcaWrld <xsemprebarca@gmail.com>
+Date:   Tue Apr 28 12:46:03 2026 +0200
+
+    commit
+
+[33mcommit 59b4892b76ed50eb63c0d79cb463a17c0088f7fc[m
+Author: Denis Geiger <denis.geiger@student.uni-siegen.de>
+Date:   Tue Apr 28 11:34:18 2026 +0200
+
+    commit
+
+[33mcommit 3c5ac78b6e87f44764a2afa96da3394b9b209e5e[m
+Merge: 07ec258 04c8599
+Author: Denis Geiger <denis.geiger@student.uni-siegen.de>
+Date:   Tue Apr 28 11:07:11 2026 +0200
+
+    Merge branch 'main' of https://github.com/Oversear13/AutoRecLab-Group01
+
+[33mcommit 07ec258e61f5e575bf2d50ea1e09605963ca083f[m
+Author: Denis Geiger <denis.geiger@student.uni-siegen.de>
+Date:   Tue Apr 28 11:07:03 2026 +0200
+
+    commit
+
+[33mcommit 04c8599b754af64c493674b78989aa5f31f46f3c[m
+Author: Mike.S <Mike.Specht@gmx.de>
+Date:   Tue Apr 28 10:38:09 2026 +0200
+
+    Update model configuration to gpt-5-nano
+
+[33mcommit 0cdc78a7da659b67c3c423da4f2da3debf7007bb[m
+Author: Mike.S <Mike.Specht@gmx.de>
+Date:   Tue Apr 28 10:33:45 2026 +0200
+
+    ran main.py successfully, added u.data into sandbox folder, changed the model to nano instead of mini
+
+[33mcommit be5eb4f5f53e5d9d3666ef14f6fadff66bd1e1d8[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Apr 27 15:11:25 2026 +0200
+
+    chore: update uv.lock to include newest omnirec commit hash
+
+[33mcommit 457827ef4d052746520dfc7cc7f9a73a5a260ccc[m
+Author: Denis Geiger <denis.geiger@student.uni-siegen.de>
+Date:   Sat Apr 25 12:03:14 2026 +0200
+
+    test
+
+[33mcommit ecc7c56d942c0f1c1864262051211d226d965033[m
+Author: Denis Geiger <denis.geiger@student.uni-siegen.de>
+Date:   Sat Apr 25 12:02:00 2026 +0200
+
+    test
+
+[33mcommit a5cd407d4473a85cf7a005ee79016366fbcc98e6[m
+Author: michi774 <schmidtmichael376@gmail.com>
+Date:   Thu Apr 23 01:21:52 2026 +0200
+
+    feat: update summary generation to output Markdown file and log path
+
+[33mcommit 6ddceab11fd9dd121bb4e7e015b660bf042fba75[m
+Author: Mike.S <Mike.Specht@gmx.de>
+Date:   Wed Apr 22 19:45:32 2026 +0200
+
+    Added the Movielens dataset
+
+[33mcommit 73b69f443b5622395b2ec4d317974205f1926306[m
+Author: michi774 <schmidtmichael376@gmail.com>
+Date:   Tue Mar 31 17:47:05 2026 +0200
+
+    docs: update README to clarify development branch purpose and features
+
+[33mcommit bd9280b59219a049c4214c612cd5028fbb22729e[m
+Merge: 5bc53b3 9a0d414
+Author: Moritz Baumgart <42941888+moritz-baumgart@users.noreply.github.com>
+Date:   Sat Mar 28 23:34:48 2026 +0100
+
+    Merge pull request #29 from ISG-Siegen/feat/custom_langgraph
+    
+    Improve agent workflow and response handling
+
+[33mcommit 9a0d414a56764b35654a2645a5cc5e8c8abd18f1[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Sat Mar 28 23:26:16 2026 +0100
+
+    chore: remove resolved TODO comment
+
+[33mcommit 6ea3a679ab492f8c541a3a70de808d81616cc007[m
+Author: michi774 <schmidtmichael376@gmail.com>
+Date:   Fri Mar 27 19:25:41 2026 +0100
+
+    feat: enhance agent response handling and improve AI message extraction. adjusted temperature value of llm for the final summary
+
+[33mcommit 8c1e7e072de662188235215d1bd3a1c1c364d6ba[m
+Author: michi774 <schmidtmichael376@gmail.com>
+Date:   Fri Mar 27 19:25:41 2026 +0100
+
+    feat: enhance agent response handling and improve AI message extraction. adjusted temperature value of llm for the final summary
+
+[33mcommit 5bc53b31c919755c9f23be06549be9b7a93eb006[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Mar 23 23:46:45 2026 +0100
+
+    refactor: removed dead code from node class, this fixes #4
+
+[33mcommit d67543eb6ba4b4951c9fbd9a278f037e52966f23[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Mar 23 18:11:28 2026 +0100
+
+    feat: add custom agent state graph using langgraph, this fixes #22 by properly handling tool call budgets
+    
+    This also adds langgraph as dependency. We now have a lot more control over the agent workflow.
+
+[33mcommit 1691a35e1e72f557286fca49098dab21c98536d8[m
+Author: Philipp Meister <philipp.meister@student.uni-siegen.de>
+Date:   Mon Mar 16 17:03:52 2026 +0100
+
+    fix: fixed note selection ambiguity by always choosing the newest node in case the score is the same.
+
+[33mcommit 89d13121de8ed6d228da192272101298f759e3a8[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Mar 9 09:51:51 2026 +0100
+
+    fix: add log in finalize_search to log final result node id
+    
+    This fixes #24
+
+[33mcommit 91c43d01e891931dd83f7e13260167ab2e190748[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Sun Mar 1 17:35:38 2026 +0100
+
+    fix: increase recursion limit for plan and code as well as score code queries
+    
+    This should further reduce the risk of the agent running into the limit, however, this is no permanent fix...
+
+[33mcommit bd87e52f93f2a0d93ac052e04256a2ed4a3213f9[m
+Author: Philipp Meister <philipp.meister@student.uni-siegen.de>
+Date:   Thu Feb 26 15:36:37 2026 +0100
+
+    fix: quick fix for langchain recursion limit crash
+    - additionally improved prompts for better OmniRec usage
+
+[33mcommit 6aa851d7c73a738457a85b749d16c4df55bfa47b[m
+Merge: eebac4f 7cc42f2
+Author: Moritz Baumgart <42941888+moritz-baumgart@users.noreply.github.com>
+Date:   Mon Feb 23 13:54:24 2026 +0100
+
+    Merge pull request #23 from ISG-Siegen/feat/type_checker
+    
+    Add type-check refinement loop to coding workflow
+
+[33mcommit eebac4f574d521574a8edb4cf31938a6ff59b5f7[m
+Author: Philipp Meister <philipp.meister@student.uni-siegen.de>
+Date:   Fri Feb 20 17:40:17 2026 +0100
+
+    chore:
+    - Cleaned up and streamlined the (system) prompts to remove redundancy and improve clarity
+    - Forced use of OpenAI responses API
+
+[33mcommit a37cfd36507b734ef62dd00bcf0ad351c2c5bbbe[m
+Author: Justus Krell <justus@krell-nrw.de>
+Date:   Fri Feb 20 13:02:11 2026 +0100
+
+    refactor: cleanup cost tracker and expllicit sum of costs
+
+[33mcommit a9103906950360ea0d7def5299b5a2b79f531150[m
+Author: Justus Krell <justus@krell-nrw.de>
+Date:   Fri Feb 20 12:32:16 2026 +0100
+
+    fix: weight node selection by child count to prevent wide trees
+
+[33mcommit 7cc42f21e8e23b1b6af3c7eea4c54a1a93d0f365[m
+Author: Michael Schmidt <schmidtmichael376@gmail.com>
+Date:   Tue Feb 17 20:33:16 2026 +0100
+
+    feat: enhance type checking with detailed results storage and output formatting
+
+[33mcommit 4176eec002360e1bef89880211dd7a863fa4aa96[m
+Author: michi774 <schmidtmichael376@gmail.com>
+Date:   Sun Feb 15 20:13:21 2026 +0100
+
+    feat: add type checking functionality with configurable attempts and integration into execution flow.
+    Before code of a certain node is executed, the type checker will first examine type errors and give those errors to the agent, which then hopefully fixes those errors in a specified number of max type checking attempts (the current default is 3 attempts)
+
+[33mcommit 93437948fa1c710479727d74ea66060d55850ce4[m
+Author: Justus Krell <justus@krell-nrw.de>
+Date:   Fri Feb 13 18:46:52 2026 +0100
+
+    fix: set epsilon to higher default value. logic added, that nodes with much childs get lower score
+
+[33mcommit 5a0a85ae89f7d1353a682091f3db85b2d124fd30[m
+Author: Justus Krell <justus@krell-nrw.de>
+Date:   Fri Feb 13 17:32:04 2026 +0100
+
+    fix: pricings now saved in json. cost log level is now debub. warning raise up if model pricings are not found.
+
+[33mcommit cac5dcdfdde3100d6c9f498ada58db12a97ab75d[m
+Author: Philipp Meister <philipp.meister@student.uni-siegen.de>
+Date:   Wed Feb 11 16:19:17 2026 +0100
+
+    fix: fixed crashes caused by missing good nodes. Now the best buggy node is selected. Added optional configuration of evaluation metrics.
+
+[33mcommit e6555cb9e57d38200c9c0cfc6105665e68002838[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Sun Feb 8 22:58:33 2026 +0100
+
+    feat: change plan and code prompts to further encourage doc search tool usage
+
+[33mcommit 9a70bbd75b9aee1b27dc46b1ca6c504c6b4609ac[m
+Author: Michael Schmidt <schmidtmichael376@gmail.com>
+Date:   Fri Feb 6 13:27:51 2026 +0100
+
+    Update search.py from fluent_langchain_query_interface branch
+
+[33mcommit 7491078c06db91ab24806f6291aae5179b372353[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Fri Feb 6 13:20:20 2026 +0100
+
+    build: add ragEmbeddings to dockerignore
+
+[33mcommit 9c6e51ef6a7c758a13fcbb04cd50fa919f5b8e5e[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Fri Feb 6 13:19:48 2026 +0100
+
+    fix: handle windows line endings (CRLF) when building docker container
+
+[33mcommit ecabbf6de3b0f4f6f30d721c4f5df5263796caaf[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Fri Feb 6 12:36:41 2026 +0100
+
+    chore: switch to develop branch of omnirec (as dependency as well as in embedding generation) to be able to use latest features/bug fixes
+
+[33mcommit afb024fcd75ec10eb0cce51e7c70d07da688b3f5[m
+Author: Michael Schmidt <schmidtmichael376@gmail.com>
+Date:   Thu Feb 5 00:14:51 2026 +0100
+
+    refactor: optimize Docker caching and simplify embeddings handling
+    
+    1. Split uv sync into dependency and project stages for better Docker layer
+    caching
+    
+    2. Remove redundant embeddings check from docker-entrypoint.sh since
+    the Python code already handles this
+    
+    3. Add workspace configuration to
+    pyproject.toml for proper package installation
+
+[33mcommit f5788ab4a10d5ed19c41514bbd894f68f8ca5dd6[m
+Author: Michael Schmidt <schmidtmichael376@gmail.com>
+Date:   Wed Feb 4 22:57:48 2026 +0100
+
+    feat(llm): implement caching for MCP tool lists to reduce overhead. Closes #12
+
+[33mcommit 866968ae5548173b0a631eb4389599d44423c956[m
+Author: Justus Krell <justus@krell-nrw.de>
+Date:   Tue Feb 3 09:47:57 2026 +0100
+
+    feat: log API token usage and cost to CSV per request
+
+[33mcommit 34444d3cc77127eb73075a44980056c11b566c12[m[33m ([m[1;33mtag: [m[1;33mv1.0.0[m[33m)[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Fri Jan 30 20:38:42 2026 +0100
+
+    chore: bump version to 1.0.0
+
+[33mcommit bca58da3d379f3a365284d6702aa1db4d352cd3b[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Fri Jan 30 20:30:22 2026 +0100
+
+    docs: update README to v2, add note that points to main branch
+
+[33mcommit 703f00cd2a1285cd36e36573a83635b1d050a133[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Fri Jan 30 20:24:45 2026 +0100
+
+    docs: add hint to develop branch to readme
+
+[33mcommit 3ad071e4ffa5e12f31ed5823fc21cb9ff21987eb[m
+Author: Justus Krell <justus.krell@student.uni-siegen.de>
+Date:   Tue Jan 27 12:02:04 2026 +0100
+
+    fix: check for dot executable early to prevent end-of-pipeline crashes
+
+[33mcommit 000dbbbd90633b97b7062af63fdb6a16bf98c2bf[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Sun Jan 25 22:35:41 2026 +0100
+
+    chore: remove old fluent langchain query demo script
+
+[33mcommit 029c9efcc7a3edfa5974ec478a3458442a853f07[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Sun Jan 25 22:30:13 2026 +0100
+
+    fix: remove usage of wrap_code and add additional safeguard against markdown code fences
+    
+    The LLM seems to like to use markdown code fences (```), when we use them, so let's not do that. This also adds additional regex search and replace to remove the markdown fences from the LLM response. Hopefully this now finally fixes #9
+
+[33mcommit 51c3a54cbb4cfd7ee8660fe87cd78f12549ed38f[m
+Merge: 2a91c28 5f7f5d1
+Author: Moritz Baumgart <42941888+moritz-baumgart@users.noreply.github.com>
+Date:   Sun Jan 25 22:01:40 2026 +0100
+
+    Merge pull request #13 from moritz-baumgart/feat/fluent_langchain_query_interface
+    
+    Feat/fluent langchain query interface
+
+[33mcommit 5f7f5d182360eba06f2106292762ba2410299e6d[m
+Author: Philipp Meister <philipp.meister@student.uni-siegen.de>
+Date:   Fri Jan 23 21:57:02 2026 +0100
+
+    chore: updated prompts and environment to use OmniRec and added system prompts to mcp calls.
+
+[33mcommit 34ecc78c19dbf0faff50eb3321949e4a7e00bbfc[m
+Author: michi774 <schmidtmichael376@gmail.com>
+Date:   Sun Jan 11 17:05:21 2026 +0100
+
+    feat: Add RAG-based documentation search with auto-generated embeddings
+    
+    - Add embedding generation CLI for OmniRec, LensKit, RecBole
+    - Auto-generate embeddings on container startup (persisted via volume)
+    - Integrate MCP documentation search into agent queries
+    - Update Docker: install git, mount ragEmbeddings, add entrypoint
+    - Add dependencies: faiss-cpu, langchain-community, python-dotenv
+
+[33mcommit 0d7f91ef4cf640e5c2adb7cd1f5c06d6806bfbf6[m
+Merge: 6909c94 6b19fb0
+Author: michi774 <schmidtmichael376@gmail.com>
+Date:   Sun Jan 11 15:23:38 2026 +0100
+
+    Merge branch 'feat/fluent_langchain_query_interface' of https://github.com/moritz-baumgart/AI4Science into feat/fluent_langchain_query_interface
+
+[33mcommit 6b19fb078cb5b41fafe1bb8278cd8046f64ca8bf[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Sat Jan 10 19:08:19 2026 +0100
+
+    feat: integrate new fluent query api into existing agent workflow
+    
+    This also marks a lot of methods as async and sets the asyncio.run entry point
+
+[33mcommit 046641f750536689a74b671539f0b0cb827a7e32[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Sat Jan 10 18:54:10 2026 +0100
+
+    fix: remove old response format prompts that still encouraged wrapping code in markdown tags
+    
+    This should finally fix #9 (at least I hope so)
+
+[33mcommit 5a1969e9d8536a439d4fa28410e0b8e85385cd25[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Sat Jan 10 18:22:40 2026 +0100
+
+    feat: explicitly use `ProviderStrategy` for setting the response format and set `strict=True` by default
+    
+    This also updates langchain to version 1.2.7 since the strict parameter was introduced in version 1.2.
+    This should #10
+
+[33mcommit 01951cfa8015e5a561e33cd08b26458859ec312f[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Sat Jan 10 18:19:50 2026 +0100
+
+    feat: change `PlanAndCode` schema to explicitly discourage markdown in the returned code
+    
+    This fixes #9
+
+[33mcommit 6909c9482b0e83e9eae9ee0898421027c1eea922[m
+Author: michi774 <schmidtmichael376@gmail.com>
+Date:   Sat Jan 10 17:20:13 2026 +0100
+
+    feat: convert main function to async and await TreeSearch run
+
+[33mcommit d8c945209cd08b0ef8ec16df598d7d32fec81259[m
+Author: michi774 <schmidtmichael376@gmail.com>
+Date:   Sat Jan 10 15:43:47 2026 +0100
+
+    feat: remove logging of model usage in run method
+
+[33mcommit 2c6f0c21f692d808f397c8cc32928c23000c172a[m
+Author: michi774 <schmidtmichael376@gmail.com>
+Date:   Sat Jan 10 15:41:31 2026 +0100
+
+    Revert "feat: handling None Value of prompt in run method and remove redundant logging of model parameter"
+    
+    This reverts commit 7f9dc481cd8b125aad020de40ffc3c2dd8d0b071.
+
+[33mcommit 7f9dc481cd8b125aad020de40ffc3c2dd8d0b071[m
+Author: michi774 <schmidtmichael376@gmail.com>
+Date:   Sat Jan 10 15:31:13 2026 +0100
+
+    feat: handling None Value of prompt in run method and remove redundant logging of model parameter
+
+[33mcommit b212bffc546be0890ceaaf0a833dec169e1e7b76[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Thu Jan 8 21:47:28 2026 +0100
+
+    fix: handle None values in prompt gracefully
+    
+    This is a workaround for #7, but does not resolve the issue, since this is another underlying problem
+
+[33mcommit aad2e5001667189ec80f8e43175c515dfafad1ed[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Thu Jan 8 20:27:41 2026 +0100
+
+    fix: remove duplicate function spec and correct respective dataclass
+
+[33mcommit 970fe7e5b6a1d005efd38dadc897ab518531389e[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Wed Jan 7 15:48:32 2026 +0100
+
+    feat: read temperature from config and actually use it in model initialization.
+
+[33mcommit 001baeb39045b5902124faf5b082b93d2274dd2b[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Sun Jan 4 21:57:27 2026 +0100
+
+    feat: use llm model from config by default when initializing a new query and make model parameter optional
+    
+    This streamlines the Query API a bit, since we don't need to pass a model now everytime.
+    
+    This also adds a config singleton to `config.py` to cache the config once it is loaded.
+
+[33mcommit 0743b564dfbfde5b3c4b61cb9466ab9d72dd3f85[m
+Author: sinan-pourazari <sinan.pourazari@gmx.de>
+Date:   Sun Dec 28 13:05:23 2025 +0100
+
+    refactor: add dataclass counterparts for function specs
+    
+    Introduce dataclass definitions mirroring existing function specs; not yet tied into agent execution.
+
+[33mcommit 471ee03352f7ca422abc7d54cca40b7420709112[m
+Author: Michael Schmidt <schmidtmichael376@gmail.com>
+Date:   Sat Jan 3 23:48:57 2026 +0100
+
+    feat: improve error handling and config usage in Query class
+    
+    - Replace sys.exit(1) with proper RuntimeError exceptions in Query.run()
+      to allow callers to handle errors gracefully
+
+[33mcommit 2a91c2884e7818160699bdc92cc5ed22ab6aa76f[m
+Author: sinan-pourazari <sinan.pourazari@gmx.de>
+Date:   Sun Dec 28 13:05:23 2025 +0100
+
+    revert: "refactor: add dataclass counterparts for function specs"
+    
+    This reverts commit 60a6de5be10eb4a3149cad92b35c0c160719931d.
+    
+    The commit was moved to the correct branch (feat/fluent_langchain_query_interface)"
+
+[33mcommit 60a6de5be10eb4a3149cad92b35c0c160719931d[m
+Author: sinan-pourazari <sinan.pourazari@gmx.de>
+Date:   Sun Dec 28 13:05:23 2025 +0100
+
+    refactor: add dataclass counterparts for function specs
+    
+    Introduce dataclass definitions mirroring existing function specs; not yet tied into agent execution.
+
+[33mcommit df8a4df492bb3f21c3a7e15a97433a1d13790044[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Tue Dec 23 23:53:36 2025 +0100
+
+    test: add test cases for prompt_to_md function
+
+[33mcommit 0c32b50926df2507cdf325e709ad61a199d1160f[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Tue Dec 23 23:53:19 2025 +0100
+
+    feat: add support for dict and list as prompt input to Query.run()
+    
+    - We can now pass arbitrarily nested str/dict/list and it will convert it to a properly formatted markdown string
+
+[33mcommit 7df08a3106f884d42cccab28d4ed168b161b1604[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Tue Dec 16 01:12:47 2025 +0100
+
+    chore: add experimental demo scripts for testing the fluent query interface
+    
+    These files should be removed from the final PR
+
+[33mcommit eaaca9d99637c566883d0586a7138513e648f959[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Tue Dec 16 01:01:08 2025 +0100
+
+    feat: add fluent langchain query interface
+
+[33mcommit 0702331a43781dc1718a0978b71df949fada53cd[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Tue Dec 16 00:56:02 2025 +0100
+
+    feat: add langchain and mcp dependecies
+
+[33mcommit 8a8d0c1211ca54565b223b88b7252315b005d7cc[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Thu Dec 11 10:46:20 2025 +0100
+
+    build: add cache mounts for uv package and python cache directories to increase build speed
+
+[33mcommit 58ccad9d0ced0700a9682955de1b84e2edfabd5f[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Thu Dec 11 10:45:38 2025 +0100
+
+    fix: copy missing packages into docker container before running uv sync
+    
+    This fixes the errors when building a fresh container from source.
+
+[33mcommit 89e6545ff9d758f86ab087d0a8ec087c04c3d9f2[m
+Author: Michael Schmidt <schmidtmichael376@gmail.com>
+Date:   Wed Dec 10 15:26:59 2025 +0100
+
+    Revert "fix: reorder RUN commands in Dockerfile for proper execution"
+    
+    This reverts commit fd1da96aef50c7cce23e41b44caaca51fcb48522.
+
+[33mcommit fd1da96aef50c7cce23e41b44caaca51fcb48522[m
+Author: Michael Schmidt <schmidtmichael376@gmail.com>
+Date:   Wed Dec 10 13:51:58 2025 +0100
+
+    fix: reorder RUN commands in Dockerfile for proper execution
+
+[33mcommit f28703655d89783447bf02eaf1ecadda1d9f0a6b[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Wed Dec 10 00:27:15 2025 +0100
+
+    feat: add automatic data loading to agent workflow
+
+[33mcommit 4d124edfc2c975f12f657ecd93510901423b4835[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Wed Dec 10 00:25:28 2025 +0100
+
+    feat: add dataloader package for automatically loading datasets
+
+[33mcommit c7dcf03f3ac15255294d5d2c80c111faab0de7da[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Dec 8 01:37:51 2025 +0100
+
+    test: add test cases for the new interpreter
+
+[33mcommit 4e3cf3f4436753303ae2a702768b7512608d6d30[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Dec 8 01:37:24 2025 +0100
+
+    fix: LLM code with multiprocessing now works correctly when run by the interpreter; remove some unused attributes from node
+    
+    - This required an almost complete rewrite of the interpreter. I kept the old interfaces for compatibility.
+    - The new interpreter cannot provide the same information about exceptions in LLM code as the old one, however, they were unused in the node class anyway.
+
+[33mcommit bc9614af8bcc2ca6229a30580890dddb7e2121ff[m
+Author: Philipp Meister <philipp.meister@student.uni-siegen.de>
+Date:   Mon Dec 1 13:33:19 2025 +0100
+
+    feat: changed node scoring, buggy nodes now also get a score. Refined requirements prompts and adapted the e-greedy strategy to the new scoring system.
+
+[33mcommit 0a9c25b8935d6308b059c3948bad56cd13ecb779[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Nov 10 16:11:35 2025 +0100
+
+    feat: add matplotlib as dependency, as the agent sometimes want to generate visualizations
+
+[33mcommit e86c09202797415fc314511444ec2105aabbf7b7[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Nov 10 16:11:07 2025 +0100
+
+    feat: automatically set out_dir using env var when running with docker compose
+
+[33mcommit 368fee0a1069f632bdb3994ffa7bf2d56211e299[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Nov 10 16:10:34 2025 +0100
+
+    feat: write code and interpreter out to a checkpoint dir for each node, automatically run tree visualization at the end of tree search
+    
+    - This requires graphviz to be installed, so we added it to the Dockerfile
+
+[33mcommit ca6238bc8a9c5dac0e31ddedb514e2d3622127ba[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Nov 10 16:04:03 2025 +0100
+
+    fix: write code requirements to configured out_dir
+
+[33mcommit e18cbb5aa9ae7293866ba71e370fab4f3eabfd02[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Nov 10 16:03:37 2025 +0100
+
+    fix: attach debug file log handler to log to the out_dir path from config
+
+[33mcommit 0dc0b793c1726755d747d41c054e519a64fb8b45[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Nov 10 16:02:26 2025 +0100
+
+    feat: add --init cli flag to initialize empty workspace directory
+
+[33mcommit f73de075b7af4f71b960d18e4ef35c5a6a6e2fdc[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Nov 10 16:00:20 2025 +0100
+
+    fix: cleanup interpreter session after search has finished
+    
+    - This removes the issue that the CLI hangs at the end of tree search
+
+[33mcommit a06c51e14585ff7481a329c91150c2eb5c5c672a[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Nov 10 15:54:43 2025 +0100
+
+    feat: add path util file for creating dirs easier
+
+[33mcommit 00e815703c78ed91b72fc94391522dcf9747ef78[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Nov 10 15:53:37 2025 +0100
+
+    chore: stop tracking config.toml
+
+[33mcommit b5246379c8c6c91cc145dbf47796c487d89aed84[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Nov 10 15:52:08 2025 +0100
+
+    fix: add out_dir to config and correctly load and merge different config sources
+
+[33mcommit 5787bbde4dfa5da17f617390d9699e3cf4efab59[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Sun Nov 2 23:46:42 2025 +0100
+
+    feat: add more detailed node scoring
+    
+    - Each requirement is now checked individually, which makes scoring more precise.
+    - The final score is now calculated manually instead of using the LLM, which makes it more accurate
+    - Feedback is added to each requirement (this also introduces a new feedback field to the requirement dataclass)
+
+[33mcommit 8ffd307849b9ffbace83a689e6777785516f493f[m
+Author: sinan-pourazari <sinan.pourazari@gmx.de>
+Date:   Sun Nov 2 16:46:11 2025 +0100
+
+    chore: Removed obsolete / unused code
+
+[33mcommit 1570873c4d55f430aed49ced05a99f9b98e8df80[m
+Author: Philipp Meister <philipp.meister@student.uni-siegen.de>
+Date:   Tue Oct 28 13:09:27 2025 +0100
+
+    feat: changed requirements func_spec to list and added reflection round to requirements generation.
+
+[33mcommit d6b698d9ffc4b123e3edff39903647bcc6de4043[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Tue Oct 28 12:42:00 2025 +0100
+
+    feat: initialize requirements when creating new nodes
+
+[33mcommit 9d99f68fda5d107ba0865b56f6221e26737b063d[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Tue Oct 28 12:33:35 2025 +0100
+
+    feat: add requirement dataclass for tracking requirements better
+
+[33mcommit d794e2c7807b34bc3e4f5af091a239075642a651[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Wed Oct 22 00:07:35 2025 +0200
+
+    docs: add paper title to readme
+
+[33mcommit 3ef7df154d2e4346db98b503da039a18db34dc7f[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Wed Oct 22 00:06:08 2025 +0200
+
+    docs: add example to readme
+
+[33mcommit 54fac00d2e2b365d97f43fdc08c525f6b0d61801[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Wed Oct 22 00:00:31 2025 +0200
+
+    fix: change tee log path to current dir so it does not run in file not exist error
+
+[33mcommit f0537b76296e77530a28986c446fc3cf2e226841[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Wed Oct 22 00:00:00 2025 +0200
+
+    fix: removed unused config attribute
+
+[33mcommit 0ac6339b71e5b33c7896f6db8eade1c46153ce69[m
+Merge: 2a896bd 2233ca7
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Tue Oct 21 23:52:54 2025 +0200
+
+    merge: fix lost git history
+
+[33mcommit 2233ca7eb5c2cb9d5663864a509fbefb6cb82650[m
+Author: Philipp Meister <philipp2102@web.de>
+Date:   Tue Oct 21 17:27:00 2025 +0200
+
+    chore: changed config default values
+
+[33mcommit 0cce71876792d1108cd9319931e6425202aa782e[m
+Author: Philipp Meister <philipp2102@web.de>
+Date:   Tue Oct 21 17:23:21 2025 +0200
+
+    chore: initial commit
+
+[33mcommit 2a896bd00be3a9ce2d0bd0fc7981adfad23c54b6[m
+Author: Philipp Meister <118217232+philipp-meister25@users.noreply.github.com>
+Date:   Tue Oct 21 17:03:03 2025 +0200
+
+    docs: added content to README
+
+[33mcommit 47b9416dca3c5509a17f6e56dc7bdfd58a3fdce5[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Oct 20 08:39:25 2025 +0200
+
+    feat: added file logging handler and some more general logging
+
+[33mcommit 9bf2e49255c520c478e66ee017bf223c0f4cb15d[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Oct 20 08:38:00 2025 +0200
+
+    feat: add startscript that also captures output to a file
+
+[33mcommit b4c983a0caed0ebec18adb370fbbaf1b874c34ae[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Oct 20 08:37:20 2025 +0200
+
+    feat: add PS1 to Dockerfile and start in interactive bash session instead of immediately running AutoRecLab
+
+[33mcommit b83ea64f3ec965770e69ec17ed2d409e7fd1d21a[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Oct 6 00:31:20 2025 +0200
+
+    feat: add best node summary at the end of treesearch
+
+[33mcommit 883aea87ebf221bd3c54cfa8daad640513a18cc5[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Oct 6 00:30:28 2025 +0200
+
+    fix: make running with docker interactive for using the cli input
+
+[33mcommit 2a7153fb738baa6f4a6a85f2fb435bcec155e844[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Oct 6 00:29:52 2025 +0200
+
+    feat: add cli prompt for user request
+
+[33mcommit e18dfd7ebae8253c8b857737caa495820f49e411[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Sun Oct 5 19:09:38 2025 +0200
+
+    fix: set tree search save path to be inside ./out for docker compatibility
+    
+    - See 392b4af9b1859f59bd0b33606579e103f6b2b82c
+
+[33mcommit 518d05f00961a979a4c9b6681501104410ead035[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Sun Oct 5 19:08:50 2025 +0200
+
+    feat: add node score to name property of node
+    
+    - This allows us to also see the score in the tree visualization plot
+
+[33mcommit fe727616011ed4310c47a1577780fbb6f76e5b94[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Sun Oct 5 19:07:43 2025 +0200
+
+    fix: set code workspace to be inside ./out for docker compatibility
+    
+    - See 392b4af9b1859f59bd0b33606579e103f6b2b82c
+
+[33mcommit fb941058c8bf76f2b11f135234d2f0062ade41a0[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Sun Oct 5 19:06:48 2025 +0200
+
+    feat: save code requirements to output directory
+
+[33mcommit 392b4af9b1859f59bd0b33606579e103f6b2b82c[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Sun Oct 5 19:05:18 2025 +0200
+
+    feat: add files for running inside docker
+    
+    - All output files should be dropped inside ./out by the agent (i.e. /app/out inside the container) as this is the directory mounted to the host inside compose.yaml
+
+[33mcommit 3cb4db6b8e48298601a81502d096f5c7d23b6517[m
+Author: sinan-pourazari <sinan.pourazari@gmx.de>
+Date:   Sat Oct 4 23:52:22 2025 +0200
+
+    fix: added plan_and_code_spec
+
+[33mcommit 790abedbcdf2f78f6ce76489798265ba875988a5[m
+Author: sinan-pourazari <sinan.pourazari@gmx.de>
+Date:   Fri Oct 3 16:14:42 2025 +0200
+
+    refactor: removed regex parsing and introduce tool-call based code extraction
+
+[33mcommit 9f0b74b6ef463716530a2b0df6286c097cdc480e[m
+Author: Philipp Meister <philipp2102@web.de>
+Date:   Thu Oct 2 16:43:34 2025 +0200
+
+    feat: added requirements-based scoring replacing the static scoring based on different quality aspects. Refactored the scoring so it uses function specs.
+
+[33mcommit 5c6bc558fa70599e9d6f040e74eea0414c2e1891[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Sep 22 17:36:20 2025 +0200
+
+    feat: add viz.py to visualize treesearch trees saved as pickle
+
+[33mcommit b52e87978dc8827fe034f05516e619617c90ed8d[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Sep 22 17:34:48 2025 +0200
+
+    feat: render buggy state in node name
+
+[33mcommit 7996dd7eda1d340632e6d1e6b01cdcb217e87a6c[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Sep 22 17:34:36 2025 +0200
+
+    fix: config fields are now correctly accesed
+
+[33mcommit 291bf21b52d1a77159607190cee8e30b03c63eba[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Sep 22 17:33:38 2025 +0200
+
+    fix: add sklearn as dependency
+
+[33mcommit 97c00f6fd5d23f1011092950906702e908e995f1[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Sep 22 17:33:09 2025 +0200
+
+    chore: add vscode launch.json for debugging
+
+[33mcommit bb849d0f77b41ddef2ffda3ea320be2e9154eb34[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Sep 22 17:32:24 2025 +0200
+
+    fix: change all_nodes property to handle reference correctly
+    
+    This version also saves the results as pickle file for debugging purposes
+
+[33mcommit cb81da9573a2fe72c9776b24c04cf406af910d07[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Sep 22 15:48:01 2025 +0200
+
+    fix: fixed off by 1 error in progress logging
+
+[33mcommit 8916015c6a344a34d15e85f26abe06d9813dd69f[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Sep 22 15:47:43 2025 +0200
+
+    feat: downgraded to python 3.11 to install lenskit
+
+[33mcommit be29ca1cc56ae2a853a7b0916e6766f63823b700[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Sep 22 15:30:40 2025 +0200
+
+    feat: make satisfactory threshold configurable
+    
+    This also runs autofmt on minimal agent
+
+[33mcommit 91fdff312c8bdc05e05f1d8a41c234fdb7e6ad6c[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Sep 22 15:28:32 2025 +0200
+
+    feat: implement complete tree search selection strategy iteration loop
+    
+    This also adds debug_prob, epsilon and max_iterations to the config
+
+[33mcommit 6db28fc8ca78c9721841eca1d7781f27a5aa4c0f[m
+Author: Philipp Meister <philipp.meister@student.uni-siegen.de>
+Date:   Mon Sep 22 14:54:16 2025 +0200
+
+    feat: added scoring function
+
+[33mcommit 88b4380bc5a30b53e06e200784ae317e7df061a9[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Sep 22 14:37:56 2025 +0200
+
+    feat: add workspace to config
+
+[33mcommit 0ac48dddf648c3996fbdfef5c23963115dc83a0b[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Sep 22 14:37:43 2025 +0200
+
+    feat: add required llm and utility dependencies
+
+[33mcommit 52a0edca18a4fd9331a6d4c067a8a4fe4d9fabaa[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Sep 22 14:37:22 2025 +0200
+
+    fix: change wrong import path in minimal agent
+
+[33mcommit 385af06a945f1a404a94526f813633afd64d5b6f[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Sep 22 14:37:03 2025 +0200
+
+    feat: add basic draft loop generation, execution and evaluation
+
+[33mcommit 0396d9b6cb12251b7d564894ecd14f8e576c6d83[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Sep 22 14:36:15 2025 +0200
+
+    fix: add missing utility methods used in openai and anthropic backend
+
+[33mcommit d78b9f6fe25129f1db104d202abddcc98c810af5[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Sep 22 11:40:30 2025 +0200
+
+    feat: add config with default values, add basic draft node generation structures, auto configure logging using rich.logging
+
+[33mcommit ea2b82d9164b14f886abcf2a9129f62a06b21b40[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Sun Sep 21 17:18:03 2025 +0200
+
+    feat: copied and adapted required functionality from AISv2
+
+[33mcommit ff377b395014842a05b1924595a474453235814e[m
+Author: Moritz Baumgart <baumgartmoritz@web.de>
+Date:   Mon Sep 15 21:47:57 2025 +0200
+
+    chore: initial commit
